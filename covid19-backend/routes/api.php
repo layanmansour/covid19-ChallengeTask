@@ -17,6 +17,7 @@ use App\Http\Controllers\CountryController;
 
 Route::get('stats',[CountryController::class,'stats']);
 Route::get('countries',[CountryController::class,'index']);
+Route::get('fill_data',[CountryController::class,'fill_data']);
 
 Route::group(['prefix'=>'country'],function(){
     Route::get('search',[CountryController::class,'search']);

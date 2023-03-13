@@ -17,9 +17,12 @@ use App\Http\Controllers\CountryController;
 
 Route::get('stats',[CountryController::class,'stats']);
 Route::get('countries',[CountryController::class,'index']);
-Route::get('country/search',[CountryController::class,'search']);
-Route::get('country/add',[CountryController::class,'create']);
 
+Route::group(['prefix'=>'country'],function(){
+    Route::get('search',[CountryController::class,'search']);
+    Route::post('add',[CountryController::class,'create']);
+    Route::post('edit/{country_slug}',[CountryController::class,'edit']);
+});
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

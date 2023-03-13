@@ -17,12 +17,22 @@ class CountryController extends Controller
         $countriesDetails = $countries::get();
         return response(['total_confirmed'=>$TotalConfirmed,'total_recovered'=>$TotalRecovered,'total_deaths','countries'=>$countriesDetails],200);
     }
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    
+    // get the list of countries, with sorting 
+    public function index(Request $request)
     {
-        //
+        //checks if there is a request parameter called "sorted"
+        $is_sorted = $request->get('sorted');
+   
+        //checks if  $is_sorted is set to the string "asc" => sorts the data by the "total_confirmed" column in ascending order
+        if( $is_sorted == 'asc')
+        {
+            $countries = Country::orderBy('total_confirmed','asc');
+        }
+        else{
+            $countries = Country::orderBy('total_confirmed','desc');
+        }
+        return response($countries,200);
     }
 
     /**

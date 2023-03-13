@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Country;
+use Illuminate\Http\Response;
 
 class CountryController extends Controller
 {
@@ -33,6 +35,14 @@ class CountryController extends Controller
             $countries = Country::orderBy('total_confirmed','desc')->paginate(10);
         }
         return response($countries,200);
+    }
+    
+   // search for countries based on their slug
+    public function search(Request $request)
+    {
+        $country_slug = $request->get('q');
+        $country = Country::where('slug', 'LIKE', "{$country_slug}%")->paginate(10);
+        return response($country, 200);
     }
 
     /**

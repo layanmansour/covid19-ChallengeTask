@@ -45,6 +45,22 @@ class CountryController extends Controller
         return response($country, 200);
     }
 
+    //is_exists method checks if a country with the given slug already exists in the database.
+    public function is_exists($country_slug)
+    {
+    // Query the `Country` model to get the count of countries with the given slug
+    $country = Country::where('slug','=',$country_slug)->get()->count();
+    
+    // If the count is 0, the country does not exist in the database
+    if ( $country == 0)
+    {
+        return false;
+    }
+    
+    // If the count is not 0, the country exists in the database
+    return true;
+    }  
+
     /**
      * Show the form for creating a new resource.
      */

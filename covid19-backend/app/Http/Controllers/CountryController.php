@@ -132,7 +132,6 @@ class CountryController extends Controller
 
     // Validate the extracted data
     $fields = Validator::make($country_covid19_data, [
-        'slug' => 'required|string',
         'country' => 'required|string',
         'country_code' => 'required|string',
         'new_confirmed' => 'required|integer',

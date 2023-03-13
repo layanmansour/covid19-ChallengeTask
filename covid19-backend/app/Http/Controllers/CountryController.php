@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\Country;
 use Illuminate\Http\Response;
@@ -122,10 +123,45 @@ class CountryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
-    {
-        //
+    function edit(Request $request, $country_slug)
+{
+    // Extract the COVID-19 data from the request
+    $country_covid19_data = $request->only([
+        'slug', 'country', 'country_code', 'new_confirmed', 'total_confirmed', 'new_deaths', 'new_recovered', 'total_recovered', 'total_death'
+    ]);
+
+    // Validate the extracted data
+    $fields = Validator::make($country_covid19_data, [
+        'slug' => 'required|string',
+        'country' => 'required|string',
+        'country_code' => 'required|string',
+        'new_confirmed' => 'required|integer',
+        'total_confirmed' => 'required|integer',
+        'new_deaths' => 'required|integer',
+        'new_recovered' => 'required|integer',
+        'total_recovered' => 'required|integer',
+    ]);
+    if ($fields->fails()) {
+        // If validation fails, return an error response
+        $response = ['errors' => $fields->errors()];
+        return response($response, 404);
     }
+
+    // Check if the country exists
+    $is_country_exists = $this->is_exists($country_slug);
+
+    if (!$is_country_exists) {
+        // If the country doesn't exist, return an error response
+        return response(['msg' => 'the country data does not exist'], 404);
+    }
+
+    // Update the country's COVID-19 data
+    Country::where('slug', '=', $country_slug)->update($country_covid19_data);
+
+    // Return a success response
+    return response(['msg' => 'the country data was edited'], 201);
+}
+
 
     /**
      * Update the specified resource in storage.

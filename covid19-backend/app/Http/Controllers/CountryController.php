@@ -18,19 +18,19 @@ class CountryController extends Controller
         return response(['total_confirmed'=>$TotalConfirmed,'total_recovered'=>$TotalRecovered,'total_deaths','countries'=>$countriesDetails],200);
     }
     
-    // get the list of countries, with sorting 
+    // list of countries with sorting,and pagination with 10 results on each page
     public function index(Request $request)
     {
         //checks if there is a request parameter called "sorted"
         $is_sorted = $request->get('sorted');
-   
+        $countries = Country::paginate(10);
         //checks if  $is_sorted is set to the string "asc" => sorts the data by the "total_confirmed" column in ascending order
         if( $is_sorted == 'asc')
         {
-            $countries = Country::orderBy('total_confirmed','asc');
+            $countries = Country::orderBy('total_confirmed','asc')->paginate(10);
         }
         else{
-            $countries = Country::orderBy('total_confirmed','desc');
+            $countries = Country::orderBy('total_confirmed','desc')->paginate(10);
         }
         return response($countries,200);
     }

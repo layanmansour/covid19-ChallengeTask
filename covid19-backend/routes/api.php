@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('stats',[CountryController::class,'stats']);
 Route::get('countries',[CountryController::class,'index']);
 Route::get('country/search',[CountryController::class,'search']);
+Route::get('country/add',[CountryController::class,'create']);
 
 
 

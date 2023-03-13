@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Country;
 use Illuminate\Http\Response;
+use App\Http\Requests\CountryRequest;
 
 class CountryController extends Controller
 {
+
     //calculates the total number of confirmed cases, recovered cases, and deaths from COVID-19 for all the countries in the database, as well as returning the details of each country.
     public function stats()
     {
@@ -20,6 +22,9 @@ class CountryController extends Controller
         return response(['total_confirmed'=>$TotalConfirmed,'total_recovered'=>$TotalRecovered,'total_deaths','countries'=>$countriesDetails],200);
     }
     
+
+     //--------------------------------------------
+
     // list of countries with sorting,and pagination with 10 results on each page
     public function index(Request $request)
     {
@@ -37,6 +42,9 @@ class CountryController extends Controller
         return response($countries,200);
     }
     
+
+     //--------------------------------------------
+
    // search for countries based on their slug
     public function search(Request $request)
     {
@@ -44,6 +52,9 @@ class CountryController extends Controller
         $country = Country::where('slug', 'LIKE', "{$country_slug}%")->paginate(10);
         return response($country, 200);
     }
+
+
+     //--------------------------------------------
 
     //is_exists method checks if a country with the given slug already exists in the database.
     public function is_exists($country_slug)
@@ -60,6 +71,9 @@ class CountryController extends Controller
     // If the count is not 0, the country exists in the database
     return true;
     }  
+
+
+     //--------------------------------------------
 
     //add new country 
     public function create(Request $request)
@@ -102,14 +116,7 @@ class CountryController extends Controller
         return response(['msg'=>'the country exists'], 500);
     }
     
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+ //--------------------------------------------
 
     /**
      * Display the specified resource.
@@ -119,6 +126,8 @@ class CountryController extends Controller
         //
     }
 
+    
+ //--------------------------------------------
     //Edit country 
     function edit(Request $request, $country_slug)
 {
@@ -159,19 +168,87 @@ class CountryController extends Controller
 }
 
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+
+ //--------------------------------------------
+
+//Fetch COVID-19 data from an API and insert or update the data in database.
+function fill_data()
+{
+    // Instantiate the Country model to access the table
+    $countryModel = new Country();
+     // Fetch data from covid19 api
+    // Use cURL to send a GET request to the COVID-19 API endpoint
+    $curl = curl_init();
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => 'https://api.covid19api.com/summary',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'GET',
+    ));
+    // Get the response from the API
+    $response = curl_exec($curl);
+    curl_close($curl);
+
+    // Convert the response from a JSON string to a PHP array.
+    $data = json_decode($response,true);
+
+    // Check if the expected data structure is present in the response
+    if( !isset( $data['Countries'] ))
     {
-        //
+        // If the data is not present, return an error response
+        return response(['msg'=>'cannot fill new data because covid18 server is down'],500);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    // Get the countries data from the API response
+    $countries = $data['Countries'];
+
+    // Loop through each country's data and check if it exists in the table
+    foreach( $countries as $country )
     {
-        //
+        // Check if a record with the same slug exists in the table
+        $is_city_exists = $countryModel->where('slug','=',$country['Slug'])->get()->count();
+
+        if( $is_city_exists )
+        {
+            // If the record exists, update the existing record with new data
+            $countryModel->where('slug','=',$country['Slug'])
+            ->update([
+                'slug'=>$country['Slug'],
+                'country'=>$country['Country'],
+                'country_code'=>$country['CountryCode'],
+                'new_confirmed'=>$country['NewConfirmed'],
+                'total_confirmed'=>$country['TotalConfirmed'],
+                'new_deaths'=>$country['NewDeaths'],
+                'new_recovered'=>$country['NewRecovered'],
+                'total_recovered'=>$country['TotalRecovered'], 
+                'total_deaths'=>$country['TotalDeaths'], 
+            ]);
+        }
+        else
+        {
+            // If the record does not exist, create a new record with the country's data
+            $countryModel->create([
+                'slug'=>$country['Slug'],
+                'country'=>$country['Country'],
+                'country_code'=>$country['CountryCode'],
+                'new_confirmed'=>$country['NewConfirmed'],
+                'total_confirmed'=>$country['TotalConfirmed'],
+                'new_deaths'=>$country['NewDeaths'],
+                'new_recovered'=>$country['NewRecovered'],
+                'total_recovered'=>$country['TotalRecovered'], 
+                'total_deaths'=>$country['TotalDeaths'], 
+            ]);
+        }
     }
+
+    // Return the entire COVID-19 data array as a response
+    return response($data,200);
+}
+
+
+
 }

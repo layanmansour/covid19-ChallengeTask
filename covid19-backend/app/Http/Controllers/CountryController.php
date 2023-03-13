@@ -61,13 +61,47 @@ class CountryController extends Controller
     return true;
     }  
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    //add new country 
+    public function create(Request $request)
     {
-        //
+        // Extract the required fields from the request
+        $country_covid19_data = $request->only( [ 
+            'slug', 'country', 'country_code', 'new_confirmed', 'total_confirmed', 'new_deaths', 'new_recovered', 'total_recovered', 'total_death' 
+        ] );
+    
+        // Validate the fields using Laravel's Validator class
+        $fields = Validator::make($country_covid19_data,
+        [
+            'slug' => 'required|string',
+            'country' => 'required|string',
+            'country_code' => 'required|string',
+            'new_confirmed' => 'required|integer',
+            'total_confirmed' => 'required|integer',
+            'new_deaths' => 'required|integer',
+            'new_recovered' => 'required|integer',
+            'total_recovered' => 'required|integer',
+        ]);
+        
+        // Check if validation fails, return errors in a JSON response
+        if($fields->fails()){
+            $response = [ 'errors' => $fields->errors() ];
+            return response($response, 404);
+        }
+        
+        // Check if the country already exists in the database
+        $is_country_exists = $this->is_exists($country_covid19_data['slug']);
+        
+        // If the country does not exist, create a new record in the database
+        if(!$is_country_exists)
+        {
+            Country::create( $country_covid19_data );
+            return response([ 'msg'=>'the country data was created' ], 201);
+        }
+        
+        // If the country already exists, return an error in a JSON response
+        return response(['msg'=>'the country exists'], 500);
     }
+    
 
     /**
      * Store a newly created resource in storage.

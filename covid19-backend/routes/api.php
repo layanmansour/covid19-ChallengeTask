@@ -14,6 +14,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('stats',[CountryController::class,'stats']);
+
+
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });

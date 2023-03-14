@@ -118,12 +118,16 @@ class CountryController extends Controller
     
  //--------------------------------------------
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    // get a country by the slug
+    public function show($country_slug)
     {
-        //
+        $is_country_exists = $this->is_exists($country_slug);
+        if(!$is_country_exists)
+        {
+            return response( 'the country does not exists', 404 );
+        }
+        $country = Country::where('slug','=',$country_slug)->first();
+        return response($country, 200);
     }
 
     

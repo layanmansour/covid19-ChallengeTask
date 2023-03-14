@@ -19,7 +19,7 @@ class CountryController extends Controller
         $TotalDeaths= $countries->sum('total_recovered');
         //fetches all the details of all the countries from the database using the "get" method and assigns it to the $countriesDetails.
         $countriesDetails = $countries::get();
-        return response(['total_confirmed'=>$TotalConfirmed,'total_recovered'=>$TotalRecovered,'total_deaths','countries'=>$countriesDetails],200);
+        return response(['total_confirmed'=>$TotalConfirmed,'total_recovered'=>$TotalRecovered,'total_deaths'=>$TotalDeaths,'countries'=>$countriesDetails],200);
     }
     
 

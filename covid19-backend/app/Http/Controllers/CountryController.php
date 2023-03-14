@@ -31,6 +31,9 @@ class CountryController extends Controller
         //checks if there is a request parameter called "sorted"
         $is_sorted = $request->get('sorted');
         $countries = Country::paginate(10);
+        if($is_sorted == null){
+            return response($countries,200);
+        }
         //checks if  $is_sorted is set to the string "asc" => sorts the data by the "total_confirmed" column in ascending order
         if( $is_sorted == 'asc')
         {

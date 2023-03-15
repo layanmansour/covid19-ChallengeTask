@@ -26,6 +26,11 @@ const routes =[
         name: 'country_add',
         component:CountryAdd,
     },
+    {
+        path:"/country/edit/:slug",
+        name: 'country_edit',
+        component:CountryEdit,
+    },
     
     {
         path:

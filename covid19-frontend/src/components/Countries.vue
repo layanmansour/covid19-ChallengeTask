@@ -25,9 +25,9 @@
           <td>{{ item.new_recovered }}</td>
           <td>{{ item.total_recovered }}</td>
           <td>{{ item.total_deaths }}</td>
-          <td>
-            Edit
-          </td>
+          <router-link :to="{ name: 'country_edit', params: { slug: item.slug } }">
+          Edit
+        </router-link>
         </tr>
       </tbody>
     </table>

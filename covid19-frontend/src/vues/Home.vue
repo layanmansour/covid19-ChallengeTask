@@ -4,17 +4,17 @@
       <h2>Countries state </h2>
       <div style="display:flex;">
         <div class="card">
-        total confirmed
+          Total Confirmed
           <div class="card-body">{{this.total_confirmed}}</div>
         </div>
     
         <div class="card">
-        total recovered
+          Total Recovered
           <div class="card-body">{{this.total_recovered}}</div>
         </div>
     
-        <div class="card">
-        total death
+        <div class="card_d">
+        Total Death
           <div class="card-body">{{this.total_deaths}}</div>
         </div>
       </div>
@@ -57,8 +57,16 @@
       color: #888;
     }
     .card{
-      margin-right:2%;
-      white-space:nowrap;
+      height: 220px;
+      margin-right:8%;
+     white-space:nowrap;
+    }
+    .card_d{
+      height: 350px;
+      width: 300px;
+      background-color: aquamarine;
+      margin-right:8%;
+     white-space:nowrap;
     }
     </style>
     

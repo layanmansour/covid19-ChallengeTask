@@ -4,7 +4,7 @@
     {{ this.total_pages  }}
     {{ typeof(this.total_pages)  }}
     <h2> Countries' cases by total cases by descends</h2>
-    <input type="text" v-model="this.search_query" @input="fetchData" />
+    <input type="text" v-model="this.search_query" @input="fetchData" placeholder="Search..." />
     <p v-if="this.isLoading">Loading.....</p>
     <div class="row" v-else>
       <Countries :data="countries" v-if="!this.isFetching" />

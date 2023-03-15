@@ -1,6 +1,14 @@
 <template>
-    <h2> Countries' cases by total cases by descends</h2>
-    <input type="text" v-model="this.search_query" />
+    <h7 style="text-align:left">Countries' cases by total cases by descends<br> .</h7>
+    <div class="has-search"> 
+      <input class="has-search" type="text" v-model="this.search_query" placeholder="Search..."   />
+    </div>
+    <div>
+      <h9> .</h9>
+    </div>
+    <div>
+      <h1></h1>
+    </div>
     <p v-if="this.isLoading">Loading.....</p>
     <div class="row" v-else>
       <Countries :data="countries" />

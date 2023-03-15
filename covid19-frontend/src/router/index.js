@@ -2,6 +2,7 @@ import NotFound from '../vues/NotFound.vue';
 import CountriesList from '../vues/CountriesList.vue';
 import Home from '../vues/Home.vue';
 import CountriesSearch from '../vues/CountriesSearch.vue';
+import CountryAdd from '../vues/CountryAdd.vue';
 
 import {createRouter,createWebHistory} from 'vue-router'
 const routes =[
@@ -19,6 +20,11 @@ const routes =[
         path:'/country/search/:search/:page?',
         name:'countries_search',
         component:CountriesSearch,
+    },
+    {
+        path:"/country/add",
+        name: 'country_add',
+        component:CountryAdd,
     },
     
     {

@@ -3,6 +3,7 @@ import CountriesList from '../vues/CountriesList.vue';
 import Home from '../vues/Home.vue';
 import CountriesSearch from '../vues/CountriesSearch.vue';
 import CountryAdd from '../vues/CountryAdd.vue';
+import CountryEdit from '../vues/CountryEdit.vue';
 
 import {createRouter,createWebHistory} from 'vue-router'
 const routes =[
@@ -31,6 +32,7 @@ const routes =[
         name: 'country_edit',
         component:CountryEdit,
     },
+
     
     {
         path:

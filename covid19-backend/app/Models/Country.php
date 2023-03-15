@@ -19,6 +19,6 @@ class Country extends Model
      'new_deaths',
      'new_recovered',
      'total_recovered',
-     'total_death' 
+     'total_deaths' 
     ];
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\Country;
 use Illuminate\Http\Response;
@@ -83,7 +84,7 @@ class CountryController extends Controller
     {
         // Extract the required fields from the request
         $country_covid19_data = $request->only( [ 
-            'slug', 'country', 'country_code', 'new_confirmed', 'total_confirmed', 'new_deaths', 'new_recovered', 'total_recovered', 'total_death' 
+            'slug', 'country', 'country_code', 'new_confirmed', 'total_confirmed', 'new_deaths', 'new_recovered', 'total_recovered', 'total_deaths' 
         ] );
     
         // Validate the fields using Laravel's Validator class
@@ -97,6 +98,7 @@ class CountryController extends Controller
             'new_deaths' => 'required|integer',
             'new_recovered' => 'required|integer',
             'total_recovered' => 'required|integer',
+            'total_deaths'  => 'required|integer',
         ]);
         
         // Check if validation fails, return errors in a JSON response
@@ -180,82 +182,74 @@ class CountryController extends Controller
 
 //Fetch COVID-19 data from an API and insert or update the data in database.
 function fill_data()
-{
-    // Instantiate the Country model to access the table
-    $countryModel = new Country();
-     // Fetch data from covid19 api
-    // Use cURL to send a GET request to the COVID-19 API endpoint
-    $curl = curl_init();
-    curl_setopt_array($curl, array(
-        CURLOPT_URL => 'https://api.covid19api.com/summary',
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => '',
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 0,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => 'GET',
-    ));
-    // Get the response from the API
-    $response = curl_exec($curl);
-    curl_close($curl);
-
-    // Convert the response from a JSON string to a PHP array.
-    $data = json_decode($response,true);
-
-    // Check if the expected data structure is present in the response
-    if( !isset( $data['Countries'] ))
     {
-        // If the data is not present, return an error response
-        return response(['msg'=>'cannot fill new data because covid18 server is down'],500);
+            // http client 
+            $countryModel = new Country();
+            // fetch data from covid19 api
+            // fetch : ask the covid19 to get data 
+            // covid19 
+            $curl = curl_init();
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://api.covid19api.com/summary',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                // get,post,put,patch,delete
+            ));
+            // get response
+            $response = curl_exec($curl);
+            curl_close($curl);
+            $data = json_decode($response,true);
+            if( !isset( $data['Countries'] ))
+            {
+
+                return response(['msg'=>'cannot fill new data because covid18 server is down'],500);
+            }
+            $countries = $data['Countries'];
+            // 
+           // dd($countries);
+            foreach( $countries as $country )
+            {
+                // select * from 'table' where;
+                $is_city_exists = $countryModel->where('slug','=',$country['Slug'])->get()->count();
+                if( $is_city_exists )
+                {
+                    //return response('city '.' '.$country['Slug'].' exists',200);
+                    $countryModel->where('slug','=',$country['Slug'])
+                    ->update([
+                        'slug'=>$country['Slug'],
+                        'country'=>$country['Country'],
+                        'country_code'=>$country['CountryCode'],
+                        'new_confirmed'=>$country['NewConfirmed'],
+                        'total_confirmed'=>$country['TotalConfirmed'],
+                        'new_deaths'=>$country['NewDeaths'],
+                        'new_recovered'=>$country['NewRecovered'],
+                        'total_recovered'=>$country['TotalRecovered'], 
+                        'total_deaths'=>$country['TotalDeaths'], 
+                    ]);
+                }
+                else{
+                    $countryModel->create([
+                        'slug'=>$country['Slug'],
+                        'country'=>$country['Country'],
+                        'country_code'=>$country['CountryCode'],
+                        'new_confirmed'=>$country['NewConfirmed'],
+                        'total_confirmed'=>$country['TotalConfirmed'],
+                        'new_deaths'=>$country['NewDeaths'],
+                        'new_recovered'=>$country['NewRecovered'],
+                        'total_recovered'=>$country['TotalRecovered'], 
+                        'total_deaths'=>$country['TotalDeaths'], 
+                    ]);
+
+                }
+            }
+
+            
+            return response(" The database was full",200);
     }
-
-    // Get the countries data from the API response
-    $countries = $data['Countries'];
-
-    // Loop through each country's data and check if it exists in the table
-    foreach( $countries as $country )
-    {
-        // Check if a record with the same slug exists in the table
-        $is_city_exists = $countryModel->where('slug','=',$country['Slug'])->get()->count();
-
-        if( $is_city_exists )
-        {
-            // If the record exists, update the existing record with new data
-            $countryModel->where('slug','=',$country['Slug'])
-            ->update([
-                'slug'=>$country['Slug'],
-                'country'=>$country['Country'],
-                'country_code'=>$country['CountryCode'],
-                'new_confirmed'=>$country['NewConfirmed'],
-                'total_confirmed'=>$country['TotalConfirmed'],
-                'new_deaths'=>$country['NewDeaths'],
-                'new_recovered'=>$country['NewRecovered'],
-                'total_recovered'=>$country['TotalRecovered'], 
-                'total_deaths'=>$country['TotalDeaths'], 
-            ]);
-        }
-        else
-        {
-            // If the record does not exist, create a new record with the country's data
-            $countryModel->create([
-                'slug'=>$country['Slug'],
-                'country'=>$country['Country'],
-                'country_code'=>$country['CountryCode'],
-                'new_confirmed'=>$country['NewConfirmed'],
-                'total_confirmed'=>$country['TotalConfirmed'],
-                'new_deaths'=>$country['NewDeaths'],
-                'new_recovered'=>$country['NewRecovered'],
-                'total_recovered'=>$country['TotalRecovered'], 
-                'total_deaths'=>$country['TotalDeaths'], 
-            ]);
-        }
-    }
-
-    // Return the entire COVID-19 data array as a response
-    return response($data,200);
-}
-
-
 
 }

@@ -57,7 +57,7 @@
     import {useRouter,useRoute} from 'vue-router';
     const router = useRouter();
     export default{
-      name:"CountrieAdd",
+      name:"CountrieEdit",
       data:function(){
         return{
             slug:"",

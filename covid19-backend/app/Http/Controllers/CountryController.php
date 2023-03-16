@@ -17,7 +17,7 @@ class CountryController extends Controller
         $countries = new Country();
         $TotalConfirmed= $countries->sum('total_confirmed');
         $TotalRecovered = $countries->sum('total_recovered');
-        $TotalDeaths= $countries->sum('total_recovered');
+        $TotalDeaths= $countries->sum('total_deaths');
         //fetches all the details of all the countries from the database using the "get" method and assigns it to the $countriesDetails.
         $countriesDetails = $countries::get();
         return response(['total_confirmed'=>$TotalConfirmed,'total_recovered'=>$TotalRecovered,'total_deaths'=>$TotalDeaths,'countries'=>$countriesDetails],200);

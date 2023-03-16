@@ -13,7 +13,7 @@
           <div class="card-body">{{this.total_recovered}}</div>
         </div>
     
-        <div class="card_d">
+        <div class="card">
         Total Death
           <div class="card-body">{{this.total_deaths}}</div>
         </div>
@@ -57,16 +57,23 @@
       color: #888;
     }
     .card{
-      height: 220px;
+      height: 350px;
+      width: 300px;
       margin-right:8%;
+      font-size: 20px;
+      text-align: center;
      white-space:nowrap;
+     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+
     }
     .card_d{
       height: 350px;
       width: 300px;
-      background-color: aquamarine;
       margin-right:8%;
-     white-space:nowrap;
+      font-size: 20px;
+      text-align: center;
+       white-space:nowrap;
+     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
     }
     </style>
     

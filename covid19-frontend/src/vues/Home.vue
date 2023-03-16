@@ -5,7 +5,9 @@
       <div style="display:flex;">
         <div class="card">
           Total Confirmed
-          <div class="card-body">{{this.total_confirmed}}</div>
+          <div class="card-body">
+           {{ numberWithCommas(this.total_confirmed)}}
+          </div>
         </div>
     
         <div class="card">
@@ -20,6 +22,36 @@
       </div>
     
     </div>
+    <!-- <div class="grid md:grid-cols-2 gap-4"> -->
+    <!-- Box 1 -->
+    <!-- <div class="shadow-md bg-blue-100 p-10 text-center rounded">
+      <h3 class="text-3xl text-blue-900 font-bold mb-4">Cases</h3>
+
+      <div class="text-2xl mb-4">
+        <span class="font-bold">New:</span>
+        {{ numberWithCommas(this.new_confirmed) }}
+      </div>
+      <div class="text-2xl mb-4">
+        <span class="font-bold">Total:</span>
+        {{ numberWithCommas(this.total_confirmed) }}
+      </div>
+    </div> -->
+
+    <!-- Box 2 -->
+    <!-- <div class="shadow-md bg-blue-200 p-10 text-center rounded">
+      <h3 class="text-3xl text-blue-900 font-bold mb-4">Deaths</h3>
+
+      <div class="text-2xl mb-4">
+        <span class="font-bold">New:</span>
+        {{ numberWithCommas(this.new_deaths) }}
+      </div>
+      <div class="text-2xl mb-4">
+        <span class="font-bold">Total:</span>
+        {{ numberWithCommas(this.total_deaths) }}
+      </div>
+    </div>
+  </div> -->
+
     </template>
     
     <script>
@@ -45,9 +77,19 @@
         this.total_confirmed = data.total_confirmed ;
         this.total_recovered = data.total_recovered ;
         this.total_deaths = data.total_deaths ;
+        this.new_deaths = data.new_deaths ;
+        this.new_confirmed = data.new_confirmed ;
         this.countries = data.countries ;
         this.isLoading = false;
+      },
+      setup () {
+    return {
+      numberWithCommas (x) {
+        return x.toString()
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
       }
+    };
+  }
     };
     </script>
     

@@ -10,27 +10,43 @@ const routes =[
         path:'/',
         name:'landing_page',
         component:Home,
+        meta:{
+            'title':'home'
+        }
     },
     {
         path:'/countries/:page?',
         name:'countries_list',
         component:CountriesList,
+        meta:{
+            'title':'home'
+        }
     },
     {
         path:'/country/search/:search/:page?',
         name:'countries_search',
         component:CountriesSearch,
+        meta:{
+            'title':'home'
+        }
     },
     {
         path:"/country/add",
         name: 'country_add',
         component:CountryAdd,
+        meta:{
+            'title':'home'
+        }
     },
     {
         path:"/country/edit/:slug",
         name: 'country_edit',
         component:CountryEdit,
+        meta:{
+            'title':'home'
+        }
     },
+    
     
     
     {

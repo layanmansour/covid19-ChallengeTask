@@ -78,7 +78,7 @@ export default {
     {
 
       this.isLoading =true;
-      let response = await fetch(`http://localhost:8000/api/countries/?page=${this.current_page}`);
+      let response = await fetch(`http://localhost:8082/api/countries/?page=${this.current_page}`);
       if ( response.status === 404 )
       {
         router.push('/404');

@@ -116,7 +116,7 @@
             method: 'POST',
             body: formdata,
           };
-          let request = await fetch(`http://localhost:8000/api/country/edit/${this.slug}`,requestOptions);
+          let request = await fetch(`http://localhost:8082/api/country/edit/${this.slug}`,requestOptions);
           if (request.status === 201)
           {
             this.$router.push('/countries');

@@ -4,6 +4,10 @@
   {{ this.total_pages  }}
   {{ typeof(this.total_pages)  }}
   <h2 class="h2"> Countries' cases by total cases by descends</h2>
+  <button class="filter" @click="this.setSortedMethod()">
+      <i :class="this.sortIcon" />
+     <!-- {{  $store.state.sorted }} -->
+    </button>
   <router-link :to="{ name: 'country_add' }">
     <button class="buttonT"> Add Country </button>
   </router-link>
@@ -41,13 +45,24 @@
 
 <script>
 import Countries from '../components/Countries.vue';
+import Search from '../components/Search.vue';
+import Alert from "../components/Alert.vue";
 
+import { mapGetters } from 'vuex';
 import { useRouter, useRoute } from 'vue-router'
 export default {
 name: 'CountriesList',
-components: {
-  Countries
-},
+computed:{
+    ...mapGetters(['getSortingMethod']),
+    sorted() {
+      return this.getSortingMethod;
+    }
+  },
+  components: {
+    Countries,
+    Search,
+    Alert
+  },
 data() {
   return {
     countries: [],
@@ -55,14 +70,19 @@ data() {
     isFetching:true,
     current_page: 1,
     total_pages: 1,
-    search_query:""
+    search_query:"",
+    sortIcon:'',
+
   };
 },
 methods:{
+  setSortedMethod() {
+      this.$store.commit('setSortMethodMutation');
+    },
   visitPage(value)
   {
-      this.current_page = parseInt(value);
-      console.log('yo:',this.current_page)
+    this.current_page = parseInt(value)
+
   },
   PreviousPage()
   {
@@ -93,6 +113,7 @@ methods:{
 
 async mounted()
 {
+  this.sortIcon=`icon-sort-amount-${this.sorted}` ;
    const route = useRoute();
    const router = useRouter();
   this.search_query = this.$route.params?.search;
@@ -103,11 +124,13 @@ async mounted()
   await this.fetchData();
 },
 watch:{
-
+  "$store.state.sorted":async function(newValue, oldValue)
+    {
+      this.sortIcon =  `icon-sort-amount-${this.sorted}`; 
+      await this.fetchData();
+    },
   current_page: async function(newValue, oldValue) {
-      /*let page = this.$route.params?.page;
-      page = parseInt(page);
-      this.current_page = isNaN(page) ? 1 : parseInt(page) ;*/
+    
       console.log('current page::;',this.current_page)
       this.$router.push(`/country/search/${this.search_query}/${this.current_page}`)
       await this.fetchData();
@@ -115,8 +138,14 @@ watch:{
   },
   search_query: async function(newValue, oldValue) {
       this.search_query = newValue;
-      //this.$router.push(`/country/search/${this.search_query}`);
+      console.log(`search query ${this.search_query}`);
+      if (this.search_query === '')
+      {
+        this.$router.push(`/countries`);
+      }
+      else this.$router.push(`/country/search/${this.search_query}`);
   }
+  
 }
 
 };
@@ -126,7 +155,7 @@ watch:{
 .button{
  
   color: #ffffff;
-  margin-top: 30px;
+  margin-top: 25px;
 margin-bottom: 10px;
   border-radius: 8px;
    cursor: pointer;
@@ -136,14 +165,20 @@ margin-bottom: 10px;
 }
 .buttonT{
   color: #ffffff;
-margin-top: 30px;
+margin-top: 25px;
 margin-bottom: 10px;
   border-radius: 8px;
    cursor: pointer;
    margin-right:3%;
    background-color: rgb(45, 106, 126);
 }
+.filter{
+  margin-right:10px;
+  border-radius: 8px;
+  background-color: rgba(164, 164, 164, 0.819);
+  color: #ffffff;
 
+}
 .page{
 
   color:  rgb(68, 165, 213);

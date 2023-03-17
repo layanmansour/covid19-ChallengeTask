@@ -49,9 +49,7 @@ const vectorLayer = new VectorLayer({
 });
 
     map.addLayer(vectorLayer);
-    
-    //axios.get('https://restcountries.com/v3.1/all')
-    await fetch('https://restcountries.com/v3.1/all')
+        await fetch('https://restcountries.com/v3.1/all')
     .then(response=>response.json())
     .then(async response => {
         let countries = response;
@@ -59,8 +57,6 @@ const vectorLayer = new VectorLayer({
         .then(response=> response.json())
         .catch(err=>err);
 
-        //let data = countries.findIndex( country=>country.name.common === "Morocco" );
-        //let data1 = countries_db.findIndex( country=>country.slug === "morocco" );
         console.log('///////////////////////////////////////////')
         // find countries list from db
         let countries_list = [];
@@ -109,16 +105,15 @@ const vectorLayer = new VectorLayer({
                 let data = response;
                 const new_confirmed = data.new_confirmed;
                 const new_deaths = data.new_deaths;
-                const new_recovered = data.new_recovered;
                 const total_deaths = data.total_deaths;
-                const total_recovered = data.total_recovered;
+                const total_confirmed= data.total_confirmed;
                 const html = `
                   <div>
-                    <h4>${countryId}</h4>
-                    <p>new confirmed: ${new_confirmed}</p>
-                    <p>new deaths: ${new_deaths}</p>
-                    <p>total deaths: ${total_deaths}</p>
-                    <p>total recobered: ${total_recovered}</p>
+                    <h5>${countryId}</h5>
+                    <p>New Confirmed: ${new_confirmed}</p>
+                    <p>Total Confirmed: ${total_confirmed}</p>
+                    <p>New Deaths: ${new_deaths}</p>
+                    <p>Total Deaths: ${total_deaths}</p>
                   </div>
                 `;
                 overlay.getElement().innerHTML = html;
@@ -139,14 +134,14 @@ const vectorLayer = new VectorLayer({
 
 <style>
 .map {
-
-  height: 800px;
+  height: 600px;
   width: 1200px;
 }
 #popup
 {
   background:white;
   color:black;
+  text-align: left;
 }
 .ol-zoom.ol-unselectable.ol-control {
     margin-left: -91%;
@@ -156,6 +151,10 @@ const vectorLayer = new VectorLayer({
 }
 .ol-attribution.ol-unselectable.ol-control.ol-uncollapsible {
     display: none;
+}
+h5{
+  text-align: center;
+
 }
 </style>
 

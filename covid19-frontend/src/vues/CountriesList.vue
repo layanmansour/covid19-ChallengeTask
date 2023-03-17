@@ -1,5 +1,11 @@
 <template>
+  
   <h2> Countries' covid19 cases by the total of confirmed cases</h2>
+
+    <button class="filter" @click="this.setSortedMethod()">
+      <i :class="this.sortIcon" />
+     <!-- {{  $store.state.sorted }} -->
+    </button>
   <Alert :messages="this.messages" v-if="this.messages.length" v-bind:type="this.message_type"/>
  
   <router-link :to="{ name: 'country_add' }">
@@ -42,9 +48,10 @@
 import Countries from '../components/Countries.vue';
 import Search from '../components/Search.vue';
 import Alert from "../components/Alert.vue";
-import { useRouter, useRoute } from 'vue-router'
 
 import { mapGetters } from 'vuex';
+import { useRouter, useRoute } from 'vue-router'
+
 
 export default {
   name: 'CountriesList',
@@ -68,16 +75,20 @@ export default {
       total_pages: 1,
       search_query:"",
       messages:[],
-      message_type:'info'
+      message_type:'info',
+      sortIcon:'',
     };
   },
   methods:{
+    setSortedMethod() {
+      this.$store.commit('setSortMethodMutation');
+    },
     async fillData()
     {
       this.messages=[];
       await fetch("http://localhost:8000/api/fill_data")
       .then(result => this.messages.push('the data was filled'))
-      .catch(error => {this.messages.push('an error occure',error);this.message_type = 'danger'});
+      .catch(error => {this.messages.push('an error occure, please try again.');this.message_type = 'danger'});
     },
     visitPage(value)
     {
@@ -111,19 +122,17 @@ export default {
 
   async mounted()
   {
-    const route = useRoute();
-    const router = useRouter();
+    this.sortIcon=`icon-sort-amount-${this.sorted}` ;
     let page = this.$route.params?.page;
     page = parseInt(page);
     this.current_page = isNaN(page) ? 1 : parseInt(page) ;
     await this.fetchData();
     this.isFetching =false;
-    this.messages.push('this is a test');
-    console.log(this.messages)
   },
   watch:{
     "$store.state.sorted":async function(newValue, oldValue)
     {
+      this.sortIcon =  `icon-sort-amount-${this.sorted}`; 
       await this.fetchData();
     },
     current_page: async function(newValue, oldValue)
@@ -162,9 +171,15 @@ margin-bottom: 10px;
    margin-right:3%;
    background-color: rgb(45, 106, 126);
 }
+.filter{
+  margin-right:10px;
+  border-radius: 8px;
+  background-color: rgba(164, 164, 164, 0.819);
+  color: #ffffff;
+
+}
 
 .page{
-
   color:  rgb(68, 165, 213);
 }
 

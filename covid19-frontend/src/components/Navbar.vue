@@ -39,7 +39,6 @@ export default{
     {
       this.showData =  !this.showData;
       let data = "collapse navbar-collapse" ;
-      //this.showNav = "collapse navbar-collapse" ;
       if (this.showData)
       {
         data += ' d-block';

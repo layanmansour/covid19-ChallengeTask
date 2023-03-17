@@ -8,8 +8,6 @@
     <th>Country Code</th>
     <th>New Confirmed</th>
     <th>Total Confirmed 
-      <i :class="this.sortIcon" @click="this.setSortedMethod()">
-      </i>
       </th>
     <th>New Deaths</th>
     <th>New Recovered</th>

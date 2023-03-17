@@ -1,57 +1,60 @@
 <template>
-    <form @submit.prevent="this.addCountrySubmitHandler">
-       Add new country
-      <p v-for="error in this.error">
-      {{error}}
-      </p>
-      <div class="form-group">
-        <label>Slug</label> 
-        <input type="text" class="form-control" v-model="this.slug"/>
+  <div class="space">
+  </div>
+  <div class="form-container"  style="width: 40%;   margin: 0 auto;">
+    <form @submit.prevent="addCountrySubmitHandler">
+      <h3> Edit Country</h3>
+      <div v-for="error in error" class="error-message">{{ error }}</div>
+
+      <div class="form-row">
+        <label class="form-label" for="slug-input">Slug:</label>
+        <input id="slug-input" class="form-input" type="text" v-model="slug" />
       </div>
-    
-       <div class="form-group">
-        <label>Country</label>
-        <input type="text" class="form-control" v-model="this.country" />
+
+      <div class="form-row">
+        <label class="form-label" for="country-input">Country:</label>
+        <input id="country-input" class="form-input" type="text" v-model="country" />
       </div>
-      <div class="form-group">
-        <label>Country code</label>
-        <input type="text" class="form-control" v-model="this.country_code" min="0"/>
+
+      <div class="form-row">
+        <label class="form-label" for="country-code-input">Country code:</label>
+        <input id="country-code-input" class="form-input" type="text" v-model="country_code" />
       </div>
-    
-      <div class="form-group">
-        <label>new confirmed</label>
-        <input type="number" class="form-control" v-model="this.new_confirmed" min="0"/>
+
+      <div class="form-row">
+        <label class="form-label" for="new-confirmed-input">New confirmed:</label>
+        <input id="new-confirmed-input" class="form-input" type="number" v-model="new_confirmed" min="0" />
       </div>
-    
-      <div class="form-group">
-        <label>total confirmed</label>
-        <input type="number" class="form-control" v-model="this.total_confirmed" min="0"/>
+
+      <div class="form-row">
+        <label class="form-label" for="total-confirmed-input">Total confirmed:</label>
+        <input id="total-confirmed-input" class="form-input" type="number" v-model="total_confirmed" min="0" />
       </div>
-    
-      <div class="form-group">
-        <label>new deaths</label>
-        <input type="number" class="form-control" v-model="this.new_deaths" min="0"/>
+
+      <div class="form-row">
+        <label class="form-label" for="new-deaths-input">New deaths:</label>
+        <input id="new-deaths-input" class="form-input" type="number" v-model="new_deaths" min="0" />
       </div>
-    
-       <div class="form-group">
-        <label>new recovered</label>
-        <input type="number" class="form-control" v-model="this.new_recovered" min="0"/>
-       </div>
-    
-       <div class="form-group">
-        <label>total recovered</label>
-        <input type="number" class="form-control" v-model="this.total_recovered" min="0"/>
-       </div>
-    
-       <div class="form-group">
-        <label>total death</label>
-        <input type="number" class="form-control" v-model="this.total_deaths" min="0"/>
-       </div>
-    
-      <button type="submit" class="btn btn-primary">Submit</button>
+      <div class="form-row">
+        <label class="form-label" for="total-deaths-input">Total deaths:</label>
+        <input id="total-deaths-input" class="form-input" type="number" v-model="total_deaths" min="0" />
+      </div>
+      <div class="form-row">
+        <label class="form-label" for="new-recovered-input">New recovered:</label>
+        <input id="new-recovered-input" class="form-input" type="number" v-model="new_recovered" min="0" />
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="total-recovered-input">Total recovered:</label>
+        <input id="total-recovered-input" class="form-input" type="number" v-model="total_recovered" min="0" />
+      </div>
+
+      
+
+      <button type="submit" class="submit-button">Submit</button>
     </form>
-    
-    </template>
+  </div>
+</template>
     
     <script>
     import {useRouter,useRoute} from 'vue-router';
@@ -76,7 +79,6 @@
       {
         const router = useRouter();
         const route = useRoute();
-        //this.current_page = route.params?.page ?  
         this.slug = route.params?.slug; 
         // fetch api
         // promise: I will get you the data from the server, ( resolve , error )
@@ -183,4 +185,56 @@
     
     </script>
     
+    <style>
+   
+    .form-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin-bottom: 10px;
+    }
     
+    .form-label {
+      margin-right: 10px;
+      width: 120px;
+      text-align: left;
+    }
+    
+    .form-input {
+      flex: 1;
+      max-width: 250px;
+      height: 30px;
+    }
+        .form-container {
+          background-color: #fff;
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        padding: 20px;
+        width: 40%;
+        margin: 0 auto
+        }
+      
+        .submit-btn {
+          background-color: #676767;
+          color: #fff;
+          border: none;
+          padding: 10px 20px;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+        .space{
+          width: 300px;
+          height: 100px;
+        }
+        body{
+        background-image: url('/images/covi1d9.png');
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center center;
+      
+      }
+        
+      </style>
+      
+     
+      

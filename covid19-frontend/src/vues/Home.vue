@@ -62,6 +62,7 @@
     </template>
     
     <script>
+    
     import Map from '../components/Map.vue';
     export default {
       name:"Home",
@@ -71,6 +72,7 @@
       components:{
     Map
   },
+  
       data:function(){
         return{
           total_confirmed:0,
@@ -132,11 +134,19 @@
       padding-top: 100px;
       padding-bottom: 30px;
     }
-    body {
+     .container {
+      width: 2000px;
     background-image: url('/images/covi1d9.png');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;
-  }
+  } 
+  /* body{
+    background-image: url('/image/covi1d9.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+  
+  } */
     </style>
     

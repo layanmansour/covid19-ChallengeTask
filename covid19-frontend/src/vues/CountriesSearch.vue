@@ -73,7 +73,7 @@ export default {
     {
 
         this.isLoading = true;
-        let url = `http://localhost:8082/api/country/search?q=${this.search_query}&page=${this.current_page}`;
+        let url = `http://localhost:8000/api/country/search?q=${this.search_query}&page=${this.current_page}`;
         let response = await fetch(url);
         if ( response.status === 404 )
         {

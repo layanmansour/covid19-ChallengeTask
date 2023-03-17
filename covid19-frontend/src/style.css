@@ -86,8 +86,6 @@ right: 100px;
 .container-fluid {
   background-color: rgba(82, 157, 182, 0.853);
   color: white;
-  height: 60px;
+  height: 65px;
 }
-.navbar-brand{
-  color: white;
-}
+

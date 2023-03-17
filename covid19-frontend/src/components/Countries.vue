@@ -1,4 +1,6 @@
 <template>
+    <div class="t">
+
     <table class="table table-striped">
       <thead>
         <tr>
@@ -36,6 +38,7 @@
         </tr>
       </tbody>
     </table>
+  </div>
     </template>
     
     <script>
@@ -50,3 +53,6 @@
       },
     };
     </script>
+    <style>
+  
+  </style>

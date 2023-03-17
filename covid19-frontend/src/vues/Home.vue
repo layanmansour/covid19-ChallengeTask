@@ -134,13 +134,13 @@
       padding-top: 100px;
       padding-bottom: 30px;
     }
-     .container {
+     /* .container {
       width: 2000px;
     background-image: url('/images/covi1d9.png');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;
-  } 
+  }  */
   /* body{
     background-image: url('/image/covi1d9.png');
     background-repeat: no-repeat;

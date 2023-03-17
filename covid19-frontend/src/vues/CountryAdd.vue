@@ -208,6 +208,13 @@
       width: 300px;
       height: 100px;
     }
+    body{
+    background-image: url('/images/covi1d9.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+  
+  }
     
   </style>
   

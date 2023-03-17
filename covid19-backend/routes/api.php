@@ -20,9 +20,7 @@ Route::get('countries',[CountryController::class,'index']);
 Route::get('fill_data',[CountryController::class,'fill_data']);
 
 Route::group(['prefix'=>'country'],function(){
-    Route::middleware('throttle:60,1')->group(function () {
-        Route::get('details/{country_slug}',[CountryController::class,'show']);
-    });
+    Route::get('details/{country_slug}',[CountryController::class,'show']);
     Route::get('search',[CountryController::class,'search']);
     Route::post('add',[CountryController::class,'create']);
     Route::post('edit/{country_slug}',[CountryController::class,'edit']);

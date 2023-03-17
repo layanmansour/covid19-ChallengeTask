@@ -23,16 +23,39 @@
     </div>
   </nav>
 </template>
+<script>
+export default{
+  name:"Navbar",
+  data:function(){
+    return {
+      showData:false,
+      showNav:"collapse navbar-collapse"
+    }
+  },
+  methods: {
+    toggleNavBar()
+    {
+      this.showData =  !this.showData;
+      let data = "collapse navbar-collapse" ;
+      //this.showNav = "collapse navbar-collapse" ;
+      if (this.showData)
+      {
+        data += ' d-block';
+      }
+      console.log(data);
+      this.showNav = data;
+    }
 
+  }
+}
+</script>
 <style>
  
-  .nav-link {
-    color: #9a1e1e;  }
-  .navbar-brand{
-    color: #9a1e1e;  }
+ 
   .text1{
     color: white;
   }
+
   
   
   

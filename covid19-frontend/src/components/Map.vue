@@ -50,29 +50,24 @@ export default {
 
     map.addLayer(vectorLayer);
     
+    //axios.get('https://restcountries.com/v3.1/all')
     await fetch('https://restcountries.com/v3.1/all')
     .then(response=>response.json())
     .then(async response => {
         let countries = response;
         let countries_db = await fetch('http://localhost:8000/api/countries/list')
         .then(response=> response.json())
-        .catch(err=>'::'+err);
+        .catch(err=>err);
 
-        let data = countries.findIndex( country=>country.name.common === "Saudi" );
-        let data1 = countries_db.findIndex( country=>country.slug === "saudi" );
-        console.log('index1:',data) // 240
-        console.log('index:',data1) // 120
-        console.log('data:', countries[data])
-        console.log('value:',countries_db[data1].slug)
+        //let data = countries.findIndex( country=>country.name.common === "Morocco" );
+        //let data1 = countries_db.findIndex( country=>country.slug === "morocco" );
         console.log('///////////////////////////////////////////')
         // find countries list from db
         let countries_list = [];
         let i,j;
-        /*console.log('countries db:',countries[240].name.common.toLowerCase() === countries_db[120].slug );
-        console.log('countries db:',countries_db[120].slug);
-        console.log('******************************');*/
         for(i=0;i<countries_db.length;i++)
         {
+          
           for(j=0;j<countries.length;j++)
           {
             let country = countries[j].name.common;
@@ -80,14 +75,10 @@ export default {
             country = country.replaceAll(' ', '-');
             if (countries_db[i].slug === country )
             {
-              if (i === 120 && j === 240)
-              {
-                console.log('countries db:',countries[j].name.common.toLowerCase() , countries_db[i] );
-                console.log('*************saaa*********************')
-              }
+              
               countries_list.push(countries[j]);
               j = (j === countries.length-1 ) ? j: j+1;
-              //break;
+              break;
             }
           }
         }
@@ -148,6 +139,7 @@ export default {
 
 <style>
 .map {
+
   height: 800px;
   width: 1200px;
 }
@@ -155,6 +147,15 @@ export default {
 {
   background:white;
   color:black;
+}
+.ol-zoom.ol-unselectable.ol-control {
+    margin-left: -91%;
+}
+.ol-rotate.ol-unselectable.ol-control.ol-hidden {
+    display: none;
+}
+.ol-attribution.ol-unselectable.ol-control.ol-uncollapsible {
+    display: none;
 }
 </style>
 

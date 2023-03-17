@@ -69,21 +69,14 @@ class CountryController extends Controller
 
      //--------------------------------------------
 
-    //is_exists method checks if a country with the given slug already exists in the database.
-    public function is_exists($country_slug)
+    //is_country_exists method checks if a country with the given slug already exists in the database.
+    public function is_country_exists($country_slug)
     {
-    // Query the `Country` model to get the count of countries with the given slug
-    $country = Country::where('slug','=',$country_slug)->get()->count();
-    
-    // If the count is 0, the country does not exist in the database
-    if ( $country == 0)
-    {
-        return false;
+        return Country::where('slug','=',$country_slug)->get()->count();
     }
     
     // If the count is not 0, the country exists in the database
-    return true;
-    }  
+    
 
 
      //--------------------------------------------
@@ -117,7 +110,7 @@ class CountryController extends Controller
         }
         
         // Check if the country already exists in the database
-        $is_country_exists = $this->is_exists($country_covid19_data['slug']);
+        $is_country_exists = $this->is_country_exists($country_covid19_data['slug']);
         
         // If the country does not exist, create a new record in the database
         if(!$is_country_exists)
@@ -135,7 +128,7 @@ class CountryController extends Controller
     // get a country by the slug
     public function show($country_slug)
     {
-        $is_country_exists = $this->is_exists($country_slug);
+        $is_country_exists = $this->is_country_exists($country_slug);
         if(!$is_country_exists)
         {
             return response( 'the country does not exists', 404 );
@@ -172,7 +165,7 @@ class CountryController extends Controller
     }
 
     // Check if the country exists
-    $is_country_exists = $this->is_exists($country_slug);
+    $is_country_exists = $this->is_country_exists($country_slug);
 
     if (!$is_country_exists) {
         // If the country doesn't exist, return an error response
@@ -196,21 +189,24 @@ function fill_data()
         $response = Http::get('https://api.covid19api.com/summary');
         $data = $response->json();
         $countryModel = new Country();
+        //return response($data,201);
         if( !isset( $data['Countries'] ))
         {
 
-            return response(['msg'=>'cannot fill new data because covid18 server is down'],500);
+            return response(['msg'=>'cannot fill new data because covid18 server is down'],200);
         }
         $countries = $data['Countries'];
         foreach( $countries as $country )
         {
-            $is_city_exists = $countryModel->where('slug','=',$country['Slug'])->get()->count();
-            if( $is_city_exists )
+            // select * from 'table' where;
+            $is_country_exists = $countryModel->where('slug','=',$country['Slug'])->get()->count();
+            $is_country_exists = $this->is_country_exists($country['Slug']);
+            if( $is_country_exists )
             {
-                EditCovid19CoutryData::dispatch($country,$country['Slug'])->delay(5);
+                EditCovid19CoutryData::dispatch($country,$country['Slug']);
             }
             else{
-                AddCovid19CoutryData::dispatch($country)->delay(5);
+                AddCovid19CoutryData::dispatch($country);
             }
         }
         return response('the data was filled',200);

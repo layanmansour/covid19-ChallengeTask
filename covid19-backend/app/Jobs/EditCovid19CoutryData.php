@@ -43,10 +43,6 @@ class EditCovid19CoutryData implements ShouldQueue
             'total_recovered'=>$this->data['TotalRecovered'], 
             'total_deaths'=>$this->data['TotalDeaths'], 
         ]);
-        info('country'.$country->slug);
     }
-    public function failed(\Throwable $e)
-    {
-        info( 'this job has failed'.$e );
-    }
+    
 }

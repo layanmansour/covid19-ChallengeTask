@@ -37,6 +37,7 @@
 
 </template>
 
+
 <script>
 import Countries from '../components/Countries.vue';
 import Search from '../components/Search.vue';
@@ -46,97 +47,97 @@ import { useRouter, useRoute } from 'vue-router'
 import { mapGetters } from 'vuex';
 
 export default {
-name: 'CountriesList',
-computed:{
-  ...mapGetters(['getSortingMethod']),
-  sorted() {
-    return this.getSortingMethod;
-  }
-},
-components: {
-  Countries,
-  Search,
-  Alert
-},
-data() {
-  return {
-    countries: [],
-    isLoading:true,
-    isFetching:true,
-    current_page: 1,
-    total_pages: 1,
-    search_query:"",
-    messages:[],
-    message_type:'info'
-  };
-},
-methods:{
-  async fillData()
-  {
-    this.messages=[];
-    await fetch("http://localhost:8000/api/fill_data")
-    .then(result => this.messages.push('the data was filled'))
-    .catch(error => {this.messages.push('an error occure',error);this.message_type = 'danger'});
-  },
-  visitPage(value)
-  {
-
-    this.current_page = parseInt(value)
-  },
-  PreviousPage()
-  {
-    this.current_page =this.current_page ===1 ? parseInt(this.current_page-1) : 1;
-  },
-  NextPage()
-  {
-    this.current_page =this.current_page ===this.total_pages ? parseInt(this.current_page+1) : 1;
-  },
-  async fetchData()
-  {
-    console.log('fetching data....')
-    this.isLoading =true;
-    let response = await fetch(`http://localhost:8000/api/countries/?page=${this.current_page}&sorted=${this.sorted}`);
-    if ( response.status === 404 )
-    {
-      router.push('/404');
+  name: 'CountriesList',
+  computed:{
+    ...mapGetters(['getSortingMethod']),
+    sorted() {
+      return this.getSortingMethod;
     }
-    const data = await response.json();
-    this.countries = data.data ;
-    this.isLoading =false;
-    this.total_pages = Math.ceil( data.total / 10);
+  },
+  components: {
+    Countries,
+    Search,
+    Alert
+  },
+  data() {
+    return {
+      countries: [],
+      isLoading:true,
+      isFetching:true,
+      current_page: 1,
+      total_pages: 1,
+      search_query:"",
+      messages:[],
+      message_type:'info'
+    };
+  },
+  methods:{
+    async fillData()
+    {
+      this.messages=[];
+      await fetch("http://localhost:8000/api/fill_data")
+      .then(result => this.messages.push('the data was filled'))
+      .catch(error => {this.messages.push('an error occure',error);this.message_type = 'danger'});
+    },
+    visitPage(value)
+    {
+
+      this.current_page = parseInt(value)
+    },
+    PreviousPage()
+    {
+      this.current_page =this.current_page ===1 ? parseInt(this.current_page-1) : 1;
+    },
+    NextPage()
+    {
+      this.current_page =this.current_page ===this.total_pages ? parseInt(this.current_page+1) : 1;
+    },
+    async fetchData()
+    {
+      console.log('fetching data....')
+      this.isLoading =true;
+      let response = await fetch(`http://localhost:8000/api/countries/?page=${this.current_page}&sorted=${this.sorted}`);
+      if ( response.status === 404 )
+      {
+        router.push('/404');
+      }
+      const data = await response.json();
+      this.countries = data.data ;
+      this.isLoading =false;
+      this.total_pages = Math.ceil( data.total / 10);
+
+    }
+  },
+
+  async mounted()
+  {
+    const route = useRoute();
+    const router = useRouter();
+    let page = this.$route.params?.page;
+    page = parseInt(page);
+    this.current_page = isNaN(page) ? 1 : parseInt(page) ;
+    await this.fetchData();
+    this.isFetching =false;
+    this.messages.push('this is a test');
+    console.log(this.messages)
+  },
+  watch:{
+    "$store.state.sorted":async function(newValue, oldValue)
+    {
+      await this.fetchData();
+    },
+    current_page: async function(newValue, oldValue)
+    {
+      //this.$router.push(`/countries/${this.current_page}`);
+      await this.fetchData();
+    },
+    search_query:function(newValue, oldValue)
+    {
+      console.log(`search query ${this.search_query}`);
+      this.$router.push(`/country/search/${this.search_query}`);
+    }
 
   }
-},
-
-async mounted()
-{
-  const route = useRoute();
-  const router = useRouter();
-  let page = this.$route.params?.page;
-  page = parseInt(page);
-  this.current_page = isNaN(page) ? 1 : parseInt(page) ;
-  await this.fetchData();
-  this.isFetching =false;
-  // this.messages.push('this is a test');
-  console.log(this.messages)
-},
-watch:{
-  "$store.state.sorted":async function(newValue, oldValue)
-  {
-    await this.fetchData();
-  },
-  current_page: async function(newValue, oldValue)
-  {
-    //this.$router.push(`/countries/${this.current_page}`);
-    await this.fetchData();
-  },
-  search_query:function(newValue, oldValue)
-  {
-    console.log(`search query ${this.search_query}`);
-    this.$router.push(`/country/search/${this.search_query}`);
-  }
-
-}
 
 };
 </script>
@@ -166,6 +167,5 @@ margin-bottom: 10px;
 
   color:  rgb(68, 165, 213);
 }
-
 
 </style>

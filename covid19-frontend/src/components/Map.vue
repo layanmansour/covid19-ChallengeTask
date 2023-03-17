@@ -1,4 +1,4 @@
-use fetch api instead of axios in code:
+<!-- use fetch api instead of axios in code: -->
 <template>
   <div ref="map" class="map"></div>
   <div ref="popup" id="popup"></div>
@@ -44,9 +44,9 @@ export default {
 
     const vectorSource = new VectorSource();
 
-    const vectorLayer = new VectorLayer({
-      source: vectorSource
-    });
+const vectorLayer = new VectorLayer({
+  source: vectorSource
+});
 
     map.addLayer(vectorLayer);
     

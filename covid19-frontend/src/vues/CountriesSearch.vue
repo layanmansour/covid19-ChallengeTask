@@ -186,5 +186,27 @@ margin-bottom: 10px;
 .h2{
   color: #ffffff;
 }
+.submit-button{
+    color: #fff;
+    display: inline-block;
+    background-color: rgb(58, 122, 143);
+    border-radius: 10px;
+    border: 4px double #cccccc;
+width: 110px;
+cursor: pointer;
+margin: 5px;
+box-shadow: #676767;
+  }
+  .submit-button:hover {
+        background-color: rgb(31, 147, 70);
+      }
+      .add-text{
+        color:rgb(58, 122, 143);
+        padding-bottom: 10px;
+      }
+      .error-message{
+        color:rgb(206, 28, 28);
+        font-style: oblique;
+      }
 
 </style>

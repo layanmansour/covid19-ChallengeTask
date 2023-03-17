@@ -3,7 +3,7 @@
   </div>
   <div class="form-container"  style="width: 40%;   margin: 0 auto;">
     <form @submit.prevent="addCountrySubmitHandler">
-      <h3> Edit Country</h3>
+      <h5 class="add-text"> Edit Country</h5>
       <div v-for="error in error" class="error-message">{{ error }}</div>
 
       <div class="form-row">
@@ -51,7 +51,7 @@
 
       
 
-      <button type="submit" class="submit-button">Submit</button>
+      <button type="submit" class="submit-button">Save</button>
     </form>
   </div>
 </template>
@@ -146,17 +146,20 @@
         setError()
         {
           this.error = []
-          if (this.slug === '')
-          {
-            this.error.push('do not leave slug empty');
+          if(this.slug === '' && this.country === '' && this.country_code === ''){
+            this.error.push('All fields are required, please fill them in');
           }
-          if (this.country === '')
+         else if (this.slug === '')
           {
-            this.error.push('do not leave country empty');
+            this.error.push('Slug is required, please fill ');
           }
-          if (this.country_code === '')
+        else  if (this.country === '')
           {
-            this.error.push('do not leave country_code empty');
+            this.error.push('Country name is required, please fill ');
+          }
+         else if (this.country_code === '')
+          {
+            this.error.push('Country Code is required, please fill ');
           }
         },
         async addCountrySubmitHandler()
@@ -214,14 +217,7 @@
         margin: 0 auto
         }
       
-        .submit-btn {
-          background-color: #676767;
-          color: #fff;
-          border: none;
-          padding: 10px 20px;
-          border-radius: 5px;
-          cursor: pointer;
-        }
+       
         .space{
           width: 300px;
           height: 100px;
@@ -232,6 +228,28 @@
         background-size: cover;
         background-position: center center;
       
+      }
+      .submit-button{
+    color: #fff;
+    display: inline-block;
+    background-color: rgb(58, 122, 143);
+    border-radius: 10px;
+    border: 4px double #cccccc;
+width: 110px;
+cursor: pointer;
+margin: 5px;
+box-shadow: #676767;
+  }
+  .submit-button:hover {
+        background-color: rgb(31, 147, 70);
+      }
+      .add-text{
+        color:rgb(58, 122, 143);
+        padding-bottom: 10px;
+      }
+      .error-message{
+        color:rgb(206, 28, 28);
+        font-style: oblique;
       }
         
       </style>

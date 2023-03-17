@@ -3,8 +3,8 @@
   </div>
   <div class="form-container"  style="width: 40%;   margin: 0 auto;">
     <form @submit.prevent="addCountrySubmitHandler">
-      <h3>Add new country</h3>
-      <div v-for="error in error" class="error-message">{{ error }}</div>
+      <h5 class="add-text">Add New Country</h5>
+      <div v-for="error in error" class="error-message">{{ error }}!</div>
 
       <div class="form-row">
         <label class="form-label" for="slug-input">Slug:</label>
@@ -195,15 +195,6 @@
     width: 40%;
     margin: 0 auto
     }
-  
-    .submit-btn {
-      background-color: #676767;
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
     .space{
       width: 300px;
       height: 100px;
@@ -213,9 +204,30 @@
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;
-  
+    font-family: serif;
   }
-    
+  .submit-button{
+    color: #fff;
+    display: inline-block;
+    background-color: rgb(58, 122, 143);
+    border-radius: 10px;
+    border: 4px double #cccccc;
+width: 110px;
+cursor: pointer;
+margin: 5px;
+box-shadow: #676767;
+  }
+  .submit-button:hover {
+        background-color: rgb(31, 147, 70);
+      }
+      .add-text{
+        color:rgb(58, 122, 143);
+        padding-bottom: 10px;
+      }
+      .error-message{
+        color:rgb(206, 28, 28);
+        font-style: oblique;
+      }
   </style>
   
  

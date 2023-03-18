@@ -15,7 +15,7 @@ git clone https://github.com/layanmansour/covid19-ChallengeTask
 2 * Navigate to the project directory:
 
 ```
-cd covid19-Task
+cd covid19-ChallengeTask-main
 ```
 3 * Start the Docker containers using Docker Compose:
 

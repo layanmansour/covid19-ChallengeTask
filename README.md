@@ -1,10 +1,17 @@
 # Covid19-ChallengeTask
-Covid19-Task
-This is a Laravel project that uses Docker to run. This project was created to 
-##Requirements
+This project is built using Laravel and Docker, and it requires Docker and Docker Compose to be installed on your system in order to run.
+
+### Requirements
 * Docker
 * Docker Compose
-Getting Started
+
+### Installation
+
+ex Git:
+
+```
+php artisan 
+```
 1. Clone the repository
 bash
 

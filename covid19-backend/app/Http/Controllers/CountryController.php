@@ -137,72 +137,28 @@ class CountryController extends Controller
     // controller has 1 role
     function fill_data()
     {
-            // http client 
-            $countryModel = new Country();
-            // fetch data from covid19 api
-            // fetch : ask the covid19 to get data 
-            // covid19 
-            $curl = curl_init();
-            curl_setopt_array($curl, array(
-                CURLOPT_URL => 'https://api.covid19api.com/summary',
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => '',
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 0,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => 'GET',
-                // get,post,put,patch,delete
-            ));
-            // get response
-            $response = curl_exec($curl);
-            curl_close($curl);
-            $data = json_decode($response,true);
-            if( !isset( $data['Countries'] ))
+        $response = Http::get('https://api.covid19api.com/summary');
+        $data = $response->json();
+        $countryModel = new Country();
+        //return response($data,201);
+        if( !isset( $data['Countries'] ) )
+        {
+
+            return response(['msg'=>'cannot fill new data because covid18 server is down'],200);
+        }
+        $countries = $data['Countries'];
+        foreach( $countries as $country )
+        {
+            $is_country_exists = $countryModel->where('slug','=',$country['Slug'])->get()->count();
+            $is_country_exists = $this->is_country_exists($country['Slug']);
+            if( $is_country_exists )
             {
-
-                return response(['msg'=>'cannot fill new data because covid18 server is down'],500);
+                EditCovid19CoutryData::dispatch($country,$country['Slug']);
             }
-            $countries = $data['Countries'];
-            // 
-            //dd($countries);
-            foreach( $countries as $country )
-            {
-                // select * from 'table' where;
-                $is_city_exists = $countryModel->where('slug','=',$country['Slug'])->get()->count();
-                if( $is_city_exists )
-                {
-                    //return response('city '.' '.$country['Slug'].' exists',200);
-                    $countryModel->where('slug','=',$country['Slug'])
-                    ->update([
-                        'slug'=>$country['Slug'],
-                        'country'=>$country['Country'],
-                        'country_code'=>$country['CountryCode'],
-                        'new_confirmed'=>$country['NewConfirmed'],
-                        'total_confirmed'=>$country['TotalConfirmed'],
-                        'new_deaths'=>$country['NewDeaths'],
-                        'new_recovered'=>$country['NewRecovered'],
-                        'total_recovered'=>$country['TotalRecovered'], 
-                        'total_deaths'=>$country['TotalDeaths'], 
-                    ]);
-                }
-                else{
-                    $countryModel->create([
-                        'slug'=>$country['Slug'],
-                        'country'=>$country['Country'],
-                        'country_code'=>$country['CountryCode'],
-                        'new_confirmed'=>$country['NewConfirmed'],
-                        'total_confirmed'=>$country['TotalConfirmed'],
-                        'new_deaths'=>$country['NewDeaths'],
-                        'new_recovered'=>$country['NewRecovered'],
-                        'total_recovered'=>$country['TotalRecovered'], 
-                        'total_deaths'=>$country['TotalDeaths'], 
-                    ]);
-
-                }
+            else{
+                AddCovid19CoutryData::dispatch($country);
             }
-
-            
-            return response($data,200);
+        }
+        return response('the data was filled',200);
     }
 }

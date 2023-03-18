@@ -59,6 +59,7 @@
 
 
     
+
 <script>
 import {useRouter} from 'vue-router';
 import Alert from "../components/Alert.vue";
@@ -69,6 +70,8 @@ export default{
   components:{ Alert },
   mounted()
   {
+    console.log( ENDPOINTS.ADD_NEW_COUNTRY );
+    console.log( `${import.meta.env.VITE_API_BASE_URL}/country/add` )
   },
   data:function(){
     return{
@@ -103,18 +106,25 @@ export default{
         body: raw,
         headers:{
         'Content-Type': 'application/json',
+        "Accept":'application/json'
         },
       };
-      let request = await fetch(ENDPOINTS.ADD_NEW_COUNTRY,requestOptions);
-      if (request.status === 201)
+      try{
+        let response = await fetch(ENDPOINTS.ADD_NEW_COUNTRY,requestOptions);
+        if( response.status === 422 )
+        {
+          this.error = await response.json();
+          console.log( this.error );
+
+        }
+        console.log('status:', response.status  );
+        return request;
+      }
+      catch(e)
       {
-        this.$router.push('/countries');
+        console.log('status:');
       }
-      else{
-        let response = await request.json();
-        this.error = [response.msg];
-      }
-      return request;
+      
     },
     checkStringIsValid(content)
     {
@@ -169,6 +179,7 @@ export default{
     },
     async addCountrySubmitHandler()
     {
+      console.log('...data')
       let isValidSubmition = ( 
         this.checkSlugIsValid(this.slug) &&
         this.checkStringIsValid( this.country ) &&
@@ -182,9 +193,11 @@ export default{
       );
       if(isValidSubmition)
       { 
+        console.log('requist...')
         let request = await this.postData();
       }
       else{
+        console.log('error...')
         this.setError(); 
       }
     },
@@ -192,6 +205,8 @@ export default{
 }
 
 </script>
+
+
 
 
     <style>

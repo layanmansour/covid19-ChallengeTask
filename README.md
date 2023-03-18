@@ -1,5 +1,5 @@
 # Covid19-ChallengeTask
-This project is built using Laravel and Docker, and it requires Docker and Docker Compose to be installed on your system in order to run.
+This project is built using Laravel, VueJS and Docker, and it requires Docker and Docker Compose to be installed on your system in order to run.
 
 ### Requirements
 * Docker

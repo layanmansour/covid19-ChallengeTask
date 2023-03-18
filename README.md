@@ -35,7 +35,7 @@ docker exec -it backend php artisan queue:work
 
 ### Usage
 
-You can access the project in your web browser at http://localhost:8081 for frontend.The backend http://localhost:8082.
+You can access the project in your web browser at http://localhost:8081 for frontend.The backend http://localhost:8000. Database http://localhost:8080
 
 To access the database, you can use the following credentials:
 

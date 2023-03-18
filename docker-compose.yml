@@ -1,0 +1,36 @@
+version: '3.1'
+services:
+
+  db:
+    image: mariadb
+    restart: always
+    ports:
+      - 8889:3306
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: covid19_db
+    volumes: 
+      - ./data:/var/lib/mysql
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+  frontend:
+    build:
+      context: ./covid19-frontend
+      dockerfile: Dockerfile
+    container_name: frontend 
+    ports:
+      - 8081:80 
+ 
+  backend:
+    build:
+      context: ./covid19-backend
+      dockerfile: Dockerfile
+    container_name: backend 
+    restart: always
+    ports:
+      - 8000:8000
+

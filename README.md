@@ -28,6 +28,10 @@ docker-compose up -d
 ```
 docker-compose exec app php artisan migrate --seed
 ```
+5 * Running The Queue Worker
+```
+docker exec -it backend php artisan queue:work
+```
 
 ### Usage
 

@@ -49,36 +49,30 @@ const vectorLayer = new VectorLayer({
 });
 
     map.addLayer(vectorLayer);
+        // Use fetch API to get data from "https://restcountries.com/v3.1/all"
         await fetch('https://restcountries.com/v3.1/all')
     .then(response=>response.json())
     .then(async response => {
         let countries = response;
+        // Use fetch API to get data from "http://localhost:8000/api/countries/list"
         let countries_db = await fetch('http://localhost:8000/api/countries/list')
         .then(response=> response.json())
         .catch(err=>err);
 
-        console.log('///////////////////////////////////////////')
-        // find countries list from db
-        let countries_list = [];
-        let i,j;
-        for(i=0;i<countries_db.length;i++)
-        {
-          
-          for(j=0;j<countries.length;j++)
-          {
-            let country = countries[j].name.common;
-            country =country.toLowerCase();
-            country = country.replaceAll(' ', '-');
-            if (countries_db[i].slug === country )
-            {
-              
-              countries_list.push(countries[j]);
-              j = (j === countries.length-1 ) ? j: j+1;
-              break;
+        let countries_list = countries?.filter(country=>{
+          let result = countries_db?.filter(country_db=>{
+            let country_name = country.name.common;
+            country_name = country_name.toLowerCase();
+            country_name = country_name.replaceAll(' ','-');
+            if(country_db?.slug==='morocco') {
+                console.log(country_name,country_db?.slug); 
             }
-          }
-        }
-
+            return country_name === country_db?.slug;
+        });
+        console.log(result.length)
+        if(result.length) return result[0];
+      });
+       // Create features from the countries list and add them to the vector source
         const features = countries_list?.map(country => {
         const [longitude, latitude] = country.latlng;
         const geometry = new Point(fromLonLat( [ latitude , longitude] ));
@@ -93,7 +87,7 @@ const vectorLayer = new VectorLayer({
     });
 
   vectorSource.addFeatures(features);
-
+        // When the map is clicked, show a popup with country data
         map.on('singleclick', event => {
           map.forEachFeatureAtPixel(event.pixel, feature => {
             const countryId = feature.getId();

@@ -59,116 +59,142 @@
 
 
     
-    <script>
-    import {useRouter} from 'vue-router';
-    const router = useRouter();
-    export default{
-      name:"CountrieAdd",
-      mounted()
-      {
-      },
-      data:function(){
-        return{
-            slug:"",
-            country:"",
-            country_code:"",
-            new_confirmed:0,
-            total_confirmed:0,
-            new_deaths:0,
-            new_recovered:0,
-            total_recovered:0,
-            total_deaths:0 ,
-            error: []
-        }
-      },
-      methods: {
-        async postData()
-        {
-          let formdata = new FormData();
-          formdata.append("slug", this.slug);
-          formdata.append("country", this.country);
-          formdata.append("country_code", this.country_code);
-          formdata.append("new_confirmed", this.new_confirmed);
-          formdata.append("total_confirmed", this.total_confirmed);
-          formdata.append("new_deaths", this.new_deaths);
-          formdata.append("new_recovered", this.new_recovered);
-          formdata.append("total_recovered", this.total_recovered);
-          formdata.append("total_deaths", this.total_deaths);
-          let requestOptions = {
-            method: 'POST',
-            body: formdata,
-          };
-          let request = await fetch('http://localhost:8000/api/country/add',requestOptions);
-          if (request.status === 201)
-          {
-            this.$router.push('/countries');
-          }
-          else{
-            let resposnse = await request.json();
-            this.error = [response.msg];
-          }
-          return request;
-        },
-        checkStringIsValid(content)
-        {
-          if (content.length === 0) return false;
-            let data = content.match(/([a-zA-Z]+(\s[a-zA-Z]+){0,})/g) ;
-            if ( data.length === 0)
-            {
-              data = data[0].split(' ');
-            }
-            return data.length === content.split(' ').length;
-        },
-        checkValueValid(content)
-        {
-          return content >= 0;
-        },
-        setError()
-        {
-          this.error = []
-          if(this.slug === '' && this.country === '' && this.country_code === ''){
-            this.error.push('All fields are required, please fill them in');
-          }
-         else if (this.slug === '')
-          {
-            this.error.push('Slug is required, please fill ');
-          }
-        else  if (this.country === '')
-          {
-            this.error.push('Country name is required, please fill ');
-          }
-         else if (this.country_code === '')
-          {
-            this.error.push('Country Code is required, please fill ');
-          }
-        },
-        async addCountrySubmitHandler()
-        {
-          let isValidSubmition = ( 
-            this.checkStringIsValid(this.slug) &&
-            this.checkStringIsValid( this.country ) &&
-            this.checkStringIsValid(this.country_code) &&
-            this.checkValueValid( this.new_confirmed) &&
-            this.checkValueValid(this.total_confirmed) &&
-            this.checkValueValid(this.new_deaths ) &&
-            this.checkValueValid(this.new_recovered ) &&
-            this.checkValueValid(this.total_recovered) &&
-            this.checkValueValid(this.total_deaths)
-          );
-          if(isValidSubmition)
-          { 
-            let request = await this.postData();
-          }
-          else{
-            this.setError(); 
-          }
-        },
-      },
+<script>
+import {useRouter} from 'vue-router';
+import Alert from "../components/Alert.vue";
+import ENDPOINTS from '../../API_ENDPOINTS';
+const router = useRouter();
+export default{
+  name:"CountrieAdd",
+  components:{ Alert },
+  mounted()
+  {
+  },
+  data:function(){
+    return{
+        slug:"",
+        country:"",
+        country_code:"",
+        new_confirmed:0,
+        total_confirmed:0,
+        new_deaths:0,
+        new_recovered:0,
+        total_recovered:0,
+        total_deaths:0 ,
+        error: []
     }
-    
-    </script>
+  },
+  methods: {
+    async postData()
+    {
+      let raw = JSON.stringify({
+        "slug": this.slug,
+        "country": this.country,
+        "country_code": this.country_code,
+        "new_confirmed":this.new_confirmed,
+        "total_confirmed":this.total_confirmed,
+        "new_deaths":this.new_deaths,
+        "new_recovered":this.new_recovered,
+        "total_recovered":this.total_recovered,
+        "total_deaths":this.total_deaths,
+      });
+      let requestOptions = {
+        method: 'POST',
+        body: raw,
+        headers:{
+        'Content-Type': 'application/json',
+        },
+      };
+      let request = await fetch(ENDPOINTS.ADD_NEW_COUNTRY,requestOptions);
+      if (request.status === 201)
+      {
+        this.$router.push('/countries');
+      }
+      else{
+        let response = await request.json();
+        this.error = [response.msg];
+      }
+      return request;
+    },
+    checkStringIsValid(content)
+    {
+      if (content?.length === 0) return false;
+        let data = content.match(/([a-zA-Z]+(\s[a-zA-Z]+){0,})/g) ;
+        if ( data?.length === 0)
+        {
+          data = data[0].split(' ');
+        }
+        return data?.length === content.split(' ').length;
+    },
+    checkSlugIsValid(content)
+    {
+      if (content?.length === 0) return false;
+        let data = content.match(/([a-zA-Z]+(-[a-zA-Z]+){0,})/g) ;
+        if ( data?.length === 0)
+        {
+          data = data[0].split(' ');
+        }
+        return data?.length === content.split(' ').length;
+    },
+    checkCountryCodeIsValid(content)
+    {
+      if (content?.length === 0) return false;
+        let data = content.match(/([A-Z]{2,})/g) ;
+        if ( data?.length === 0)
+        {
+          data = data[0].split(' ');
+        }
+        return data?.length === content.split(' ').length;
+    },
+
+    checkValueValid(content)
+    {
+      return content >= 0;
+    },
+    setError()
+    {
+      this.error = []
+      if (this.slug === '')
+      {
+        this.error.push('do not leave slug empty');
+      }
+      if (this.country === '')
+      {
+        this.error.push('do not leave country empty');
+      }
+      if (this.country_code === '')
+      {
+        this.error.push('do not leave country_code empty');
+      }
+    },
+    async addCountrySubmitHandler()
+    {
+      let isValidSubmition = ( 
+        this.checkSlugIsValid(this.slug) &&
+        this.checkStringIsValid( this.country ) &&
+        this.checkCountryCodeIsValid(this.country_code) &&
+        this.checkValueValid( this.new_confirmed) &&
+        this.checkValueValid(this.total_confirmed) &&
+        this.checkValueValid(this.new_deaths ) &&
+        this.checkValueValid(this.new_recovered ) &&
+        this.checkValueValid(this.total_recovered) &&
+        this.checkValueValid(this.total_deaths)
+      );
+      if(isValidSubmition)
+      { 
+        let request = await this.postData();
+      }
+      else{
+        this.setError(); 
+      }
+    },
+  },
+}
+
+</script>
+
+
     <style>
-   
 .form-row {
   display: flex;
   flex-direction: row;

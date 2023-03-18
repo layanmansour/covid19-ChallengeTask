@@ -27,6 +27,9 @@ class CountryController extends Controller
         $countriesDetails = $countries::get();
         return response(['total_confirmed'=>$TotalConfirmed,'total_recovered'=>$TotalRecovered,'total_deaths'=>$TotalDeaths,'new_deaths'=> $NewDeaths,'new_confirmed'=>$NewConfirmed, 'countries'=>$countriesDetails],200);
     }
+    
+    //--------------------------------------------
+
     public function countries()
     {
         $data =  Country::select('slug')->get();
@@ -82,45 +85,12 @@ class CountryController extends Controller
      //--------------------------------------------
 
     //add new country 
-    public function create(Request $request)
+    public function create(CountryRequest $request)
     {
-        // Extract the required fields from the request
-        $country_covid19_data = $request->only( [ 
-            'slug', 'country', 'country_code', 'new_confirmed', 'total_confirmed', 'new_deaths', 'new_recovered', 'total_recovered', 'total_deaths' 
-        ] );
-    
-        // Validate the fields using Laravel's Validator class
-        $fields = Validator::make($country_covid19_data,
-        [
-            'slug' => 'required|string',
-            'country' => 'required|string',
-            'country_code' => 'required|string',
-            'new_confirmed' => 'required|integer',
-            'total_confirmed' => 'required|integer',
-            'new_deaths' => 'required|integer',
-            'new_recovered' => 'required|integer',
-            'total_recovered' => 'required|integer',
-            'total_deaths'  => 'required|integer',
-        ]);
-        
-        // Check if validation fails, return errors in a JSON response
-        if($fields->fails()){
-            $response = [ 'errors' => $fields->errors() ];
-            return response($response, 404);
-        }
-        
-        // Check if the country already exists in the database
-        $is_country_exists = $this->is_country_exists($country_covid19_data['slug']);
-        
-        // If the country does not exist, create a new record in the database
-        if(!$is_country_exists)
-        {
-            Country::create( $country_covid19_data );
-            return response([ 'msg'=>'the country data was created' ], 201);
-        }
-        
-        // If the country already exists, return an error in a JSON response
-        return response(['msg'=>'the country exists'], 500);
+        // get the validated data
+        $country_covid19_data = $request->validated();
+        Country::create( $country_covid19_data );
+        return response([ 'msg'=>'the country data was created' ], 201);
     }
     
  //--------------------------------------------
@@ -142,28 +112,8 @@ class CountryController extends Controller
     //Edit country 
     function edit(Request $request, $country_slug)
 {
-    // Extract the COVID-19 data from the request
-    $country_covid19_data = $request->only([
-        'slug', 'country', 'country_code', 'new_confirmed', 'total_confirmed', 'new_deaths', 'new_recovered', 'total_recovered', 'total_deaths'
-    ]);
-
-    // Validate the extracted data
-    $fields = Validator::make($country_covid19_data, [
-        'country' => 'required|string',
-        'country_code' => 'required|string',
-        'new_confirmed' => 'required|integer',
-        'total_confirmed' => 'required|integer',
-        'new_deaths' => 'required|integer',
-        'new_recovered' => 'required|integer',
-        'total_recovered' => 'required|integer',
-        'total_deaths'  => 'required|integer',
-    ]);
-    if ($fields->fails()) {
-        // If validation fails, return an error response
-        $response = ['errors' => $fields->errors()];
-        return response($response, 404);
-    }
-
+    // get the validated data
+    $country_covid19_data = $request->validated();
     // Check if the country exists
     $is_country_exists = $this->is_country_exists($country_slug);
 
@@ -183,32 +133,34 @@ class CountryController extends Controller
 
  //--------------------------------------------
 
-//Fetch COVID-19 data from an API and insert or update the data in database.
-function fill_data()
+    // Fetch COVID-19 data from an API and insert or update the data in database.
+    function fill_data()
     {
+        // Make an HTTP GET request to the COVID-19 API
         $response = Http::get('https://api.covid19api.com/summary');
         $data = $response->json();
         $countryModel = new Country();
-        //return response($data,201);
-        if( !isset( $data['Countries'] ))
+         // Check if the 'Countries' key is present in the response data
+        if( !isset( $data['Countries'] ))// Instantiate a new Country model
         {
 
             return response(['msg'=>'cannot fill new data because covid18 server is down'],200);
         }
-        $countries = $data['Countries'];
+        $countries = $data['Countries']; // Get the countries array from the response data
         foreach( $countries as $country )
         {
-            // select * from 'table' where;
+            // Check if the country with this slug already exists in the database
             $is_country_exists = $countryModel->where('slug','=',$country['Slug'])->get()->count();
             $is_country_exists = $this->is_country_exists($country['Slug']);
+            // If the country already exists, dispatch an EditCovid19CoutryData job
             if( $is_country_exists )
             {
                 EditCovid19CoutryData::dispatch($country,$country['Slug']);
             }
-            else{
+            else{// Otherwise, dispatch an AddCovid19CoutryData job
                 AddCovid19CoutryData::dispatch($country);
             }
         }
-        return response('the data was filled',200);
+        return response('the data was filled',200);// Return a success response
     }
 }

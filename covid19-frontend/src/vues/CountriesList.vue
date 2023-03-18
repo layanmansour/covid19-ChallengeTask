@@ -48,7 +48,7 @@
 import Countries from '../components/Countries.vue';
 import Search from '../components/Search.vue';
 import Alert from "../components/Alert.vue";
-
+import ENDPOINTS from '../../API_ENDPOINTS';
 import { mapGetters } from 'vuex';
 import { useRouter, useRoute } from 'vue-router'
 

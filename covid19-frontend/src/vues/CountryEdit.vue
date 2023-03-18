@@ -57,6 +57,7 @@
 </template>
     
     <script>
+    import ENDPOINTS from '../../API_ENDPOINTS';
     import {useRouter,useRoute} from 'vue-router';
     const router = useRouter();
     export default{
@@ -118,7 +119,7 @@
             method: 'POST',
             body: formdata,
           };
-          let request = await fetch(`http://localhost:8000/api/country/edit/${this.slug}`,requestOptions);
+          let request = await fetch(ENDPOINTS.EDIT_COUNTRY/`${this.slug}`,requestOptions);
           if (request.status === 201)
           {
             this.$router.push('/countries');

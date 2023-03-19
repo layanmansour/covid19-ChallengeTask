@@ -26,7 +26,7 @@ docker-compose up -d
 4 * Run the migrations and seed the database:
 
 ```
-docker-compose exec app php artisan migrate --seed
+docker-compose exec backend php artisan migrate --seed
 ```
 5 * Running The Queue Worker
 ```

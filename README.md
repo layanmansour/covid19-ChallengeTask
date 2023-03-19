@@ -45,6 +45,14 @@ To access the database, you can use the following credentials:
 * Username: root
 * Password: root
 
+### Testing 
+
+To test the application using unit test on covid19-backend/tests/CreatesApplication.php, run the project after that simply run the following command:
+
+```
+php artisan test
+```
+
 ### Stopping the application
 
 To stop the application, simply run the following command:
@@ -54,5 +62,7 @@ docker-compose down
 ```
 
 This will stop and remove all containers, networks, and volumes that were created by Docker Compose.
+
+
 
 

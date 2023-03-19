@@ -60,6 +60,7 @@
 
     
 
+
 <script>
 import {useRouter} from 'vue-router';
 import Alert from "../components/Alert.vue";
@@ -84,10 +85,14 @@ export default{
         new_recovered:0,
         total_recovered:0,
         total_deaths:0 ,
-        error: []
+        error: [],
+        showAlert:false,
     }
   },
   methods: {
+    hideAlert() {
+      this.showAlert = false;
+    },
     async postData()
     {
       let raw = JSON.stringify({
@@ -109,21 +114,22 @@ export default{
         "Accept":'application/json'
         },
       };
-      try{
-        let response = await fetch(ENDPOINTS.ADD_NEW_COUNTRY,requestOptions);
-        if( response.status === 422 )
-        {
-          this.error = await response.json();
-          console.log( this.error );
 
-        }
-        console.log('status:', response.status  );
-        return request;
-      }
-      catch(e)
+
+      let response = await fetch(ENDPOINTS.ADD_NEW_COUNTRY,requestOptions);
+      console.log('response data:',response.status)
+      if( response.status === 422 )
       {
-        console.log('status:');
+        let result = await response.json();
+        this.error = result.msg || result;
+        this.showAlert =true;
+        console.log('response data:',response.status)
       }
+      else if(  response.status === 201 ){
+        this.$router.push('/countries');
+      }
+      console.log('status:', response.status  );
+      return response;
       
     },
     checkStringIsValid(content)
@@ -168,14 +174,25 @@ export default{
       {
         this.error.push('do not leave slug empty');
       }
+      else if( this.checkSlugIsValid(this.slug)){
+        this.error.push('the slug is not valide');
+      }
       if (this.country === '')
       {
         this.error.push('do not leave country empty');
+      }
+      else if( this.checkStringIsValid(this.country)){
+        this.error.push('the country is not valide');
       }
       if (this.country_code === '')
       {
         this.error.push('do not leave country_code empty');
       }
+      else if( this.checkCountryCodeIsValid(this.country_code)){
+        this.error.push('the country code is not valide');
+      }
+      this.showAlert =true;
+
     },
     async addCountrySubmitHandler()
     {
@@ -191,6 +208,7 @@ export default{
         this.checkValueValid(this.total_recovered) &&
         this.checkValueValid(this.total_deaths)
       );
+      console.log('validate...')
       if(isValidSubmition)
       { 
         console.log('requist...')

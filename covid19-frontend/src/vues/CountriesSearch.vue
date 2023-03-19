@@ -92,6 +92,7 @@ methods:{
   {
     this.current_page = this.current_page !==this.total_pages ? this.current_page + 1 : this.total_pages;
   },
+  // Fetch the data from the API
   async fetchData()
   {
 
@@ -116,6 +117,7 @@ async mounted()
   this.sortIcon=`icon-sort-amount-${this.sorted}` ;
    const route = useRoute();
    const router = useRouter();
+       // Get the search
   this.search_query = this.$route.params?.search;
   let page = this.$route.params?.page;
   page = parseInt(page);

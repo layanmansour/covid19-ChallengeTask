@@ -87,10 +87,23 @@ class CountryController extends Controller
     //add new country 
     public function create(CountryRequest $request)
     {
-        // get the validated data
-        $country_covid19_data = $request->validated();
+         // get the validated data
+         try{
+            $country_covid19_data = $request->validated();
+        }
+        catch (ValidationException $e) {
+            return response()->json([ 'errors' => $e->validator->getMessageBag(), ], 422);
+        }
+        $country_slug = $country_covid19_data ['slug'];
+        $is_country_exists = $this->is_country_exists($country_slug);
+
+        // create the country if the country does not exists
+        if($is_country_exists)
+        {
+            return response([ 'errors'=>'the country data  is exists' ], 404);
+        }
         Country::create( $country_covid19_data );
-        return response([ 'msg'=>'the country data was created' ], 201);
+        return response([ 'msg'=>'the country data was added' ], 201);
     }
     
  //--------------------------------------------
@@ -110,24 +123,35 @@ class CountryController extends Controller
     
  //--------------------------------------------
     //Edit country 
-    function edit(Request $request, $country_slug)
-{
-    // get the validated data
-    $country_covid19_data = $request->validated();
-    // Check if the country exists
-    $is_country_exists = $this->is_country_exists($country_slug);
+    function edit(CountryRequest $request,$country_slug)
+    {
+        // get the validated data
+        try{
+            $country_covid19_data = $request->validated();
+        }
+        catch (ValidationException $e) {
+            return response()->json([ 'errors' => $e->validator->getMessageBag(), ], 422);
+        }
+        $is_country_exists = $this->is_country_exists($country_slug);
+        if(!$is_country_exists) return response([ 'errors'=>'the country data does not exists' ], 404);
+        $country_details = Country::where('slug','=',$country_slug)->first();
+        // check if the country exists and does not equal the current country
 
-    if (!$is_country_exists) {
-        // If the country doesn't exist, return an error response
-        return response(['msg' => 'the country data does not exist'], 404);
+        $is_country_duplicate = Country::where('slug','!=',$country_slug)
+        ->Where('country','=',$country_covid19_data['country'])->count();
+
+        $is_code_duplicate = Country::where('slug','!=',$country_slug)
+        ->Where('country_code','=',$country_covid19_data['country_code'])->count();
+
+        $errors = [];
+        if(  $is_code_duplicate && $is_country_duplicate ) return response([ 'errors'=>'the country code and name already exists' ], 422);
+        if(  $is_code_duplicate ) return response([ 'errors'=>'the country code already exists' ], 422);
+        if(   $is_country_duplicate) return response([ 'errors'=>'the country name already exists' ], 422);
+
+        // create the country if the country does not exists
+        Country::where('slug','=',$country_slug)->update( $country_covid19_data );
+        return response([ 'message'=>'the country data was edited' ], 201);
     }
-
-    // Update the country's COVID-19 data
-    Country::where('slug', '=', $country_slug)->update($country_covid19_data);
-
-    // Return a success response
-    return response(['msg' => 'the country data was edited'], 201);
-}
 
 
 

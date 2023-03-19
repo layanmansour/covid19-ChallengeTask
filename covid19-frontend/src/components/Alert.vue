@@ -1,15 +1,28 @@
 <template>
-    <div class="alert" :class="alertClass" v-if="show">
-      <button type="button" class="close" @click="hide">&times;</button>
-      <div v-for="(message, index) in messages" :key="index">{{ message }}</div>
-    </div>
+  <br/>
+  {{ messages.hasOwnProperty('errors') }} <br/>
+  {{ messages }} <br/>
+  {{ messages instanceof Array}} <br/>
+  {{ messages instanceof Object}} <br/>
+  
+  <br/>
+  <div class="alert" :class="alertClass" >
+    <button type="button" class="close" @click="$emit('close')">&times;</button>
+      <div v-if=" messages instanceof Array && messages.hasOwnProperty('errors')" v-for="(message, index) in messages?.errors" :key="index" >
+         {{ message[0] }} 
+      </div>
+      <div v-if="messages instanceof Array && !messages.hasOwnProperty('errors')" v-for="(message, index) in messages" :key="msg-`${index}`" >
+         {{ message }}
+      </div>
+      <div v-if="messages instanceof Object || false"> {{ messages.errors }} </div>
+  </div>
   </template>
   
   <script>
   export default {
     props: {
       messages: {
-        type: Array,
+        type: [Object, Array],
         required: true,
       },
       type: {
@@ -17,8 +30,14 @@
         default: "info",
       },
     },
+    mounted(){
+      console.log('alert component mounted')
+      this.show = this.showAlert;
+      console.log('show alert:',this.show,this.showAlert)
+    },
     data() {
       return {
+        //show: this.showAlert,
         show: true,
       };
     },
@@ -32,10 +51,11 @@
         this.show = false;
       },
     },
-    mounted() {
-      setTimeout(() => {
-        this.show = false;
-      }, 10000);
+    watch: {
+      showAlert() {
+        // This method will be called whenever the childValue prop changes
+        this.$forceUpdate();
+      },
     },
   };
   </script>
@@ -49,4 +69,3 @@
     width: 300px;
   }
   </style>
-  

@@ -1,9 +1,14 @@
 <template>
+  <br/>
+  {{  this.showAlert }} {{  this.error }}
+<br/>
   <div class="space">
   </div>
   <div class="form-container"  style="width: 40%;   margin: 0 auto;">
     <form @submit.prevent="addCountrySubmitHandler">
       <h5 class="add-text">Add New Country</h5>
+      show alert:{{ this.showAlert }}
+  <Alert :messages="this.error"  type="danger" v-if="showAlert" @close="hideAlert"/>
       <div v-for="error in error" class="error-message">{{ error }}!</div>
 
       <div class="form-row">
@@ -49,14 +54,10 @@
         <input id="total-recovered-input" class="form-input" type="number" v-model="total_recovered" min="0" />
       </div>
 
-      
-
       <button type="submit" class="submit-button">Submit</button>
     </form>
   </div>
 </template>
-
-
 
     
 
@@ -93,6 +94,7 @@ export default{
     hideAlert() {
       this.showAlert = false;
     },
+        // A method to send the data to the server using the POST method  
     async postData()
     {
       let raw = JSON.stringify({
@@ -118,7 +120,7 @@ export default{
 
       let response = await fetch(ENDPOINTS.ADD_NEW_COUNTRY,requestOptions);
       console.log('response data:',response.status)
-      if( response.status === 422 )
+      if( response.status !== 201 )
       {
         let result = await response.json();
         this.error = result.msg || result;
@@ -132,6 +134,7 @@ export default{
       return response;
       
     },
+     // A method to check if a string is valid (only contains letters and spaces)
     checkStringIsValid(content)
     {
       if (content?.length === 0) return false;
@@ -142,6 +145,7 @@ export default{
         }
         return data?.length === content.split(' ').length;
     },
+           // A method to check if a slug is valid (only contains letters and hyphens)
     checkSlugIsValid(content)
     {
       if (content?.length === 0) return false;

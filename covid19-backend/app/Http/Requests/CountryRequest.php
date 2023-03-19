@@ -25,9 +25,9 @@ class CountryRequest extends FormRequest
     {
         return [
             //
-            'slug' => 'required|string|unique:countries,slug',
-            'country' => 'required|string|unique:countries,country',
-            'country_code' => 'required|string||unique:countries,country_code',
+            'slug' => 'required|string',
+            'country' => 'required|string',
+            'country_code' => 'required|string',
             'new_confirmed' => 'required|integer',
             'total_confirmed' => 'required|integer',
             'new_deaths' => 'required|integer',
@@ -41,9 +41,7 @@ class CountryRequest extends FormRequest
     {
         return [
             'slug.required' => 'Slug is required.',
-            'slug.unique' => 'Slug already exists.',
             'country.required' => 'Country is required.',
-            'country.unique' => 'Country already exists.',
             'new_confirmed.required' => 'New confirmed email format.',
             'total_confirmed.required' => 'Total confirmed is required',
             'new_deaths.required' => 'New deaths is required',

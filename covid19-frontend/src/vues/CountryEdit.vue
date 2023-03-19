@@ -1,10 +1,11 @@
 <template>
   <div class="space">
+    {{ this.error }}
   </div>
   <div class="form-container"  style="width: 40%;   margin: 0 auto;">
-    <form @submit.prevent="addCountrySubmitHandler">
+    <form @submit.prevent="this.submitData">
       <h5 class="add-text"> Edit Country</h5>
-      <div v-for="error in error" class="error-message">{{ error }}</div>
+      <Alert :messages="this.error"  type="danger" v-if="showAlert" @close="hideAlert"/>
 
       <div class="form-row">
         <label class="form-label" for="slug-input">Slug:</label>
@@ -55,7 +56,7 @@
     </form>
   </div>
 </template>
-  
+
 <script>
 import {useRouter,useRoute} from 'vue-router';
 import Alert from "../components/Alert.vue";
@@ -127,7 +128,6 @@ export default{
       };
 ;
       let request = await fetch(`http://localhost:8000/api/country/edit/${this.slug}`,requestOptions);
-      console.log('request',request.status);
       if ( request.status === 201)
       {
         this.$router.push('/countries');
@@ -150,16 +150,7 @@ export default{
         }
         return data?.length === content.split(' ').length;
     },
-    checkSlugIsValid(content)
-    {
-      if (content?.length === 0) return false;
-        let data = content.match(/([a-z]+(-[a-z]+){0,})/g) ;
-        if ( data?.length === 0)
-        {
-          data = data[0].split(' ');
-        }
-        return data?.length === content.split(' ').length;
-    },
+    
     checkCountryCodeIsValid(content)
     {
       if (content?.length === 0) return false;
@@ -181,13 +172,7 @@ export default{
     setError()
     {
       this.error = []
-      if (this.slug === '')
-      {
-        this.error.push('do not leave slug empty');
-      }
-      else if( this.checkSlugIsValid(this.slug)){
-        this.error.push('the slug is not valide');
-      }
+      
       if (this.country === '')
       {
         this.error.push('do not leave country empty');
@@ -207,10 +192,8 @@ export default{
     {
       this.error =[];
       this.showAlert = false;
-      console.log(this.showAlert);
       console.log('----------------------');
       let isValidSubmition = ( 
-          this.checkSlugIsValid(this.slug) &&
           this.checkStringIsValid( this.country ) &&
           this.checkCountryCodeIsValid(this.country_code) &&
           this.checkValueValid( this.new_confirmed) &&
@@ -220,17 +203,6 @@ export default{
           this.checkValueValid(this.total_recovered) &&
           this.checkValueValid(this.total_deaths)
       );
-      console.log(
-        this.checkSlugIsValid(this.slug) ,
-        this.checkStringIsValid( this.country ) ,
-        this.checkCountryCodeIsValid(this.country_code) ,
-        this.checkValueValid( this.new_confirmed) ,
-        this.checkValueValid(this.total_confirmed) ,
-        this.checkValueValid(this.new_deaths ) ,
-        this.checkValueValid(this.new_recovered ) ,
-        this.checkValueValid(this.total_recovered) ,
-        this.checkValueValid(this.total_deaths)
-      )
       if(isValidSubmition)
       { 
       await this.postData();
@@ -248,6 +220,10 @@ export default{
 }
 
 </script>
+
+
+
+
     
     <style>
    .form-row {
